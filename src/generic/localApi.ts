@@ -1,5 +1,5 @@
-import { IGenericGameApi } from "./genericApis";
-import { IGenericGame } from "./genericTypes";
+import { IGenericGameApi } from "./apis";
+import { IGenericGame } from "./types";
 
 var allGames: IGenericGame[] = []; // move to localstorage
 

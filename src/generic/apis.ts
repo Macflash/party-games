@@ -1,8 +1,9 @@
 // This is where we define all SERVER actions
 // For local single player games we can still use these actions but simply use a stub based off browser storage?
 
-import { IGenericGame } from "./genericTypes";
+import { IGenericGame } from "./types";
 
+export type CB<T = any> = (newValue: T) => void;
 export type Get<ResponseType> = () => Promise<ResponseType>;
 export type Post<PayloadType, ResponseType = void> = (payload: PayloadType) => Promise<ResponseType>;
 

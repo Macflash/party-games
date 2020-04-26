@@ -1,6 +1,11 @@
 body { 
   background-color: rgb(50,50,50);
   color: white;
+  top: 0;
+  bottom: 0;
+  left:0;
+  right:0;
+  padding: 0 10px;
 }
 
 button {
@@ -17,6 +22,25 @@ button:hover {
   background-color: rgb(200,200,200);
 }
 
-button:active {
+button:active,button:disabled {
   background-color: rgb(150,150,150);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input, select {
+  font-size: 15px;
+  margin: 10px;
+  padding: 5px;
+  border: 2px solid rgb(220,220,220);
+  border-radius: 2px;
+  background-color: inherit;
+  color: white;
+}
+
+input:active, input:focus, select:active, select:focus {
+  color: black;
+  background-color: rgb(220,220,220);
 }

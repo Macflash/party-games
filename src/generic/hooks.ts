@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Get } from "./genericApis";
+import { Get } from "./apis";
 
 /**
  * Use an api call
