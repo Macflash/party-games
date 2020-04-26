@@ -19,14 +19,14 @@ export const Dialog: React.FC = props => {
 
 export const Input: React.FC<{
     name: string,
-    value?: string,
+    value?: string | null,
     onChange: CB<string>,
     inputProps?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 }> = props => {
     return <div>
         <label>
             {props.name}
-            <input {...props.inputProps} value={props.value} onChange={ev => props.onChange(ev.target.value)} />
+            <input {...props.inputProps} value={props.value ?? undefined} onChange={ev => props.onChange(ev.target.value)} />
         </label>
     </div>
 }
@@ -39,7 +39,8 @@ export const DropDown: React.FC<{
     return <div>
         <label>
             {props.name}
-            <select value={props.value} onChange={ev => props.onChange(ev.target.value)}>
+            <select placeholder="Please pick an option" value={props.value} onChange={ev => props.onChange(ev.target.value)}>
+                <option>Please pick an option</option>
                 {props.children}
             </select>
         </label>

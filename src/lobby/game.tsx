@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IGenericGame } from "../generic/types";
 
-export const Game: React.FC<{ game: IGenericGame }> = props => {
+export const Game: React.FC<{ game: IGenericGame, yourName: string }> = props => {
     const { game } = props;
     let gameComponent: React.ReactNode = `Game ${game.type} was not found!`;
     switch (game.type) {

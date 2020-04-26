@@ -1,18 +1,18 @@
 import * as React from "react";
 import { useGet } from "../generic/hooks";
-import { IGenericLobbyApi } from "../generic/apis";
+import { IGenericLobbyApi, CB } from "../generic/apis";
 import { CreateGame } from "./createGame";
 import { Header, border } from "../basic/basics";
 import { IGenericGame } from "../generic/types";
 import { GameLobby } from "./gameLobby";
 
-export const Lobby: React.FC<{ api: IGenericLobbyApi }> = props => {
+export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, startGame: CB<IGenericGame> }> = props => {
     const { api } = props;
     const [games, isLoadingGames, refreshGames] = useGet(api.GetLobbies);
     const [currentLobby, setCurrentLobby] = React.useState<IGenericGame | null>(null); 
 
     if(currentLobby){
-        return <GameLobby game={currentLobby} />;
+        return <GameLobby yourName={props.yourName} game={currentLobby} startGame={props.startGame} />;
     }
 
     return <div>
@@ -34,7 +34,7 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi }> = props => {
 
         {/** Actions */}
         <div>
-            <CreateGame onCreate={g => setCurrentLobby(g)} />
+            <CreateGame yourName={props.yourName} onCreate={g => setCurrentLobby(g)} />
             <button onClick={refreshGames}>Refresh List</button>
         </div>
     </div>;

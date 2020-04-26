@@ -1,12 +1,20 @@
 import * as React from "react";
 import { CB, IGenericLobbyApi } from "../generic/apis";
 import { Dialog, Input, Header, DropDown } from "../basic/basics";
-import { CreateBasicGame } from "./gameLobby";
 import { IGenericGame } from "../generic/types";
 
-export const CreateGame: React.FC<{ onCreate: CB<IGenericGame> }> = props => {
+export const CreateBasicGame = (): IGenericGame => ({
+    state: "InPublicLobby",
+    id: null as any,
+    players: [],
+    name: "",
+    nextToPlay: null as any,
+    type: null as any,
+});
+
+export const CreateGame: React.FC<{ onCreate: CB<IGenericGame>, yourName: string }> = props => {
     const [showDialog, setShowDialog] = React.useState(false);
-    const [game, setGame] = React.useState<IGenericGame>(CreateBasicGame());
+    const [game, setGame] = React.useState<IGenericGame>({ ...CreateBasicGame(), players: [{ name: props.yourName }] });
 
     return <>
         <button onClick={() => setShowDialog(true)}>Create Game</button>
@@ -26,15 +34,14 @@ export const CreateGame: React.FC<{ onCreate: CB<IGenericGame> }> = props => {
                                 : Math.min(Math.max(0, Number(maxPlayers)), 20)
                     })}
                 />
-                
+
                 <DropDown name="Type" value={game.type} onChange={type => setGame({ ...game, type })}>
                     <option value="RollX">Roll - X</option>
                     <option value="CribBIGage">CribBIGage</option>
                 </DropDown>
-                
 
                 <div>
-                    <button disabled={!game.name} onClick={() => props.onCreate(game)}>Create</button>
+                    <button disabled={!game.name || !game.type} onClick={() => props.onCreate(game)}>Create</button>
                     <button onClick={() => setShowDialog(false)}>Cancel</button>
                 </div>
             </Dialog>
