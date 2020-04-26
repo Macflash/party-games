@@ -24,7 +24,7 @@ const RollX: React.FC<{ game: IGenericGame }> = props => {
 
     return (
         <div style={{ display: "flex" }}>
-            <ScoreCard scoreCard={game} dice={dice} setScoreCard={setGame} />
+            <ScoreCard scoreCard={game} dice={dice} setScoreCard={newScore => { setGame(newScore); setRolls(3); }} />
             <DiceArea dice={dice} setDice={setDice} rolls={rolls} setRolls={setRolls} />
         </div>
     );
