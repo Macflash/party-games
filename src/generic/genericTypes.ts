@@ -10,8 +10,8 @@ export interface IGenericGame<T extends object> {
     gameState: "InPublicLobby" | "InPrivateLobby" | "InGame";
     gameType: string;
 
-    /** Any options used by the game */
-    gameTypeOptions?: T;
+    /** Any settings used for the specific game type */
+    gameTypeSettings?: T;
 
     /** Next to play is the only one allowed to update the server 
      * When posting the next to play cannot be you! */
