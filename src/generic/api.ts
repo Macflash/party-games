@@ -17,6 +17,12 @@ export interface IGenericLobbyApi {
     /** Create a game on the server. Response can be empty if the server doesn't change anything. */
     CreateGame: Post<IGenericGame<any>>;
 
+    /** Update a game on the server.
+     *  This lets the host of the game change game settings and min/max players.
+     *  Only the host should be able to do this!
+     */
+    UpdateGame: Post<IGenericGame<any>>;
+
     /** Join a game using the game id */
     JoinGame: Post<string, IGenericGame<any>>;
 }
