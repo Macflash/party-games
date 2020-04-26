@@ -26,7 +26,6 @@ const RollX: React.FC<{ game: IGenericGame }> = props => {
         <div style={{ display: "flex" }}>
             <ScoreCard scoreCard={game} dice={dice} setScoreCard={setGame} />
             <DiceArea dice={dice} setDice={setDice} rolls={rolls} setRolls={setRolls} />
-            <div style={{ margin: 20 }}>Rolls left: {rolls}</div>
         </div>
     );
 }
@@ -54,7 +53,9 @@ export const DiceArea: React.FC<{
                 props.setDice?.(props.dice.map(d => d === 0 ? Math.floor(Math.random() * 5) + 1 : d));
             }}
             disabled={!props.setDice || props.dice.filter(d => d === 0).length <= 0}
-        >Roll!</button>
+        >
+            Roll ({props.rolls})
+        </button>
     </div>
 }
 
