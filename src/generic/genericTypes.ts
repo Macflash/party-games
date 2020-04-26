@@ -5,7 +5,7 @@ export interface IGenericPlayer {
 }
 
 /** Generic base object for all games */
-export interface IGenericGame<T extends object> {
+export interface IGenericGame<T extends object = any> {
     gameId: string;
     gameState: "InPublicLobby" | "InPrivateLobby" | "InGame";
     gameType: string;

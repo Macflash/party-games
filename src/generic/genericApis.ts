@@ -4,7 +4,7 @@
 import { IGenericGame } from "./genericTypes";
 
 export type Get<ResponseType> = () => Promise<ResponseType>;
-export type Post<PayloadType, ResponseType = never> = (payload: PayloadType) => Promise<ResponseType>;
+export type Post<PayloadType, ResponseType = void> = (payload: PayloadType) => Promise<ResponseType>;
 
 export interface IJoinGameRequest {
     /** Game you want to join */
@@ -48,15 +48,20 @@ export interface IGenericLobbyApi {
 }
 
 /** Generic API for all games that have started */
-export interface IGenericPlayApi {
+export interface IGenericPlayApi<T extends object = any> {
     /** Just passively get the latest game object. 
      * This can be empty if no change since last request
      * or request can be held until there is a new update. */
-    Refresh: Get<IGenericGame<any>[]>;
+    Refresh: Get<IGenericGame<T>>;
 
     /** Get the game object by a specific game id.
      *  @warn You should only be able to do this if the nextToPlay is YOU!
      *  @warn You should always have to change the nextToPlay to be someone else!
      */
-    PlayTurn: Post<IGenericGame<any>>;
+    PlayTurn: Post<IGenericGame<T>>;
+}
+
+export interface IGenericGameApi<T extends object = any>  {
+    Lobby: IGenericLobbyApi;
+    Play: IGenericPlayApi<T>;
 }
