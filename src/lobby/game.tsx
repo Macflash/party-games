@@ -9,7 +9,7 @@ export const Game: React.FC<{ game: IGenericGame, yourName: string }> = props =>
             gameComponent = <RollXGame game={game} />
     }
 
-    return <div>{gameComponent}</div>;
+    return <React.Suspense fallback="Loading Game...">{gameComponent}</React.Suspense>;
 }
 
 const RollXGame = React.lazy(() => import("../rollX/rollX"));

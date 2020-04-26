@@ -16,7 +16,7 @@ export interface RollXScore {
 }
 
 const RollX: React.FC<{ game: IGenericGame }> = props => {
-    const [rolls, setRolls] = React.useState(4);
+    const [rolls, setRolls] = React.useState(3);
     const [dice, setDice] = React.useState([0, 0, 0, 0, 0]);
     const [game, setGame] = React.useState<RollXScore>({
         Numbers: [],
@@ -63,8 +63,9 @@ export default RollX;
 export const Die: React.FC<{ number: number, onClick?: () => void }> = props => {
     const size = 30;
     return <div style={{
+        color: "black",
         cursor: "pointer",
-        border: "2px solid black",
+        border: "2px solid white",
         width: size,
         height: size,
         textAlign: "center",

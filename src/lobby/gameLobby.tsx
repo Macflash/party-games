@@ -30,7 +30,7 @@ export const GameLobby: React.FC<{ game: IGenericGame, yourName: string, startGa
 
                 {youAreHost ? <div>
                     <button disabled={!dirty} onClick={() => { setDirty(false); }}>Update</button>
-                    <button disabled={game.players.length < 2}>Start!</button>
+                    <button disabled={game.players.length < 2} onClick={() => props.startGame(game)}>Start!</button>
                     <button
                         onClick={() =>
                             setGame({
@@ -48,7 +48,7 @@ export const GameLobby: React.FC<{ game: IGenericGame, yourName: string, startGa
             <div style={{ flex: "auto", padding: "0 10px", margin: 10, border }}>
                 <Header>Players ({game.players.length}{game.maxPlayers ? `/${game.maxPlayers}` : null})</Header>
                 {game.players.map((player, i) =>
-                    <div style={{
+                    <div key={i} style={{
                         display: "flex",
                         borderBottom: border,
                         padding: "10px 0",
