@@ -28,6 +28,9 @@ export interface IGenericGameApi {
      * or request can be held until there is a new update. */
     GetLatestGameStatus: Get<IGenericGame<any>[]>;
 
-    /** Get the game object by a specific game id */
+    /** Get the game object by a specific game id.
+     *  You should only be able to do this if the nextToPlay is YOU!
+     *  You should always have to change the nextToPlay to be someone else!
+     */
     PostYourTurn: Post<IGenericGame<any>>;
 }
