@@ -19,6 +19,5 @@ export interface IGenericGame<T extends object> {
     players: IGenericPlayer[];
 
     // These would need to be enforced at the server side if we support them
-    minPlayers?: number;
     maxPlayers?: number;
 }
