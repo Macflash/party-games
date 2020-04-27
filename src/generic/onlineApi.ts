@@ -1,5 +1,6 @@
 import { IGenericGameApi } from "./apis";
 import axios from "axios";
+import { ServerGameObject } from "./types";
 
 export const OnlineApi: IGenericGameApi = {
     Lobby: {

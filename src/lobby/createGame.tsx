@@ -9,7 +9,7 @@ export const CreateBasicGame = (): ServerGameObject => ({
     players: [],
     name: "",
     nextToPlay: null as any,
-    data: { type: null as any }
+    data: "",
 });
 
 export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: string }> = props => {
@@ -35,13 +35,13 @@ export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: st
                     })}
                 />
 
-                <DropDown name="Type" value={game.data.type} onChange={type => setGame({ ...game, data: {...game.data, type} })}>
+                <DropDown name="Type" value={game.objectData?.type} onChange={type => setGame({ ...game, objectData: {...game.objectData, type} })}>
                     <option value="RollX">Roll - X</option>
                     <option value="CribBIGage">CribBIGage</option>
                 </DropDown>
 
                 <div>
-                    <button disabled={!game.name || !game.data.type} onClick={() => props.onCreate(game)}>Create</button>
+                    <button disabled={!game.name || !game.objectData?.type} onClick={() => props.onCreate(game)}>Create</button>
                     <button onClick={() => setShowDialog(false)}>Cancel</button>
                 </div>
             </Dialog>

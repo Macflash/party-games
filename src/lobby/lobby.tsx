@@ -27,7 +27,7 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChan
                         //todo this shouldn't happen
                         if (!game) { return null; }
                         return <div style={{ border, padding: 10 }}>
-                            {game.data.type} |
+                            {game.objectData?.type} |
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}
                             <button onClick={async () => {

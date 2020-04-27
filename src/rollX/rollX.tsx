@@ -15,16 +15,26 @@ export interface RollXScore {
     Chance?: number;
 }
 
+const createEmptyArray = (num: number) => {
+    var arr = new Array(num);
+    for(var i =0; i < num; i++){
+        arr[i] = 0;
+    }
+
+    return arr;
+}
+
 const RollX: React.FC<{ game: ServerGameObject }> = props => {
+    const num = 5;
     const [rolls, setRolls] = React.useState(3);
-    const [dice, setDice] = React.useState([0, 0, 0, 0, 0]);
+    const [dice, setDice] = React.useState(createEmptyArray(num));
     const [game, setGame] = React.useState<RollXScore>({
         Numbers: [],
     });
 
     return (
         <div style={{ display: "flex" }}>
-            <ScoreCard scoreCard={game} dice={dice} setScoreCard={newScore => { setGame(newScore); setRolls(3); }} />
+            <ScoreCard scoreCard={game} dice={dice} setScoreCard={newScore => { setGame(newScore); setRolls(3); setDice(createEmptyArray(num))}} />
             <DiceArea dice={dice} setDice={setDice} rolls={rolls} setRolls={setRolls} />
         </div>
     );
