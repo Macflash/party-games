@@ -5,19 +5,26 @@ import { LocalApi } from './generic/localApi';
 import { PickName } from './lobby/pickName';
 import { IGenericGame } from './generic/types';
 import { Game } from './lobby/game';
+import { OnlineApi } from './generic/onlineApi';
 
 function App() {
   const [name, setName] = React.useState<string | null>(null);
   const [game, setGame] = React.useState<IGenericGame | null>(null);
-  if(!name){
+  if (!name) {
     return <PickName onPick={setName} />
   }
 
-  if(game){
-    return <Game game={game} yourName={name}  />;
+  if (game) {
+    return <Game game={game} yourName={name} />;
   }
 
-  return <Lobby yourName={name} api={LocalApi.Lobby} startGame={setGame} />;
+  return <Lobby
+    yourName={name}
+    api={window.location.host.indexOf("localhost:3000") >= 0
+      ? LocalApi.Lobby
+      : OnlineApi.Lobby}
+    startGame={setGame}
+  />;
 }
 
 export default App;

@@ -1,7 +1,8 @@
 import { IGenericGameApi } from "./apis";
 import { IGenericGame } from "./types";
 
-var allGames: IGenericGame[] = []; // move to localstorage
+var localGameIdCounter = 0;
+var allGames: {[id: number]: IGenericGame} = {}; // move to localstorage
 
 var currentPlayer: string | null = null;
 var currentGame: IGenericGame | null = null; // move to local storage
@@ -16,22 +17,27 @@ function delayed<T>(value: T, delay: number = 500) {
 
 export const LocalApi: IGenericGameApi = {
     Lobby: {
-        GetLobbies: async () => delayed(allGames),
-        GetLobbyById: async id => delayed(allGames.find(game => game.id == id)!),
-        CreateLobby: async newGame => { allGames.push(newGame) },
-        UpdateLobby: async updatedGame => {
-            var index = allGames.findIndex(game => game.id == updatedGame.id);
-            var existingGame = allGames[index];
+        GetAll: async () => delayed(allGames),
+        GetById: async id => delayed(allGames[Number(id)]),
+        Create: async newGame => { 
+            newGame.game.id = localGameIdCounter.toString();
+            allGames[localGameIdCounter] = newGame.game;
+            localGameIdCounter++;
+            newGame.playerName = newGame.playerName + "#1";
+            return newGame;
+         },
+        Update: async updatedGame => {
+            var existingGame = allGames[Number(updatedGame.id)];
 
             // Ensure the first player (e.g. the HOST) is the only one who can update the game
             if (existingGame.players[0].name != currentPlayer) {
                 throw "Only the HOST can update the game!";
             }
 
-            allGames[index] = updatedGame;
+            allGames[Number(updatedGame.id)] = updatedGame;
         },
-        JoinLobby: async request => {
-            var game = allGames.find(game => game.id == request.gameId)!;
+        Join: async request => {
+            var game = allGames[Number(request.gameId)];
             var playerName = request.playerName + " #" + game.players.length + 1;
 
             game.players.push({ name: playerName });
@@ -46,9 +52,9 @@ export const LocalApi: IGenericGameApi = {
         }
     },
     Play: {
-        PlayTurn: async payload => {
+        Play: async payload => {
             // Only the nextToPlay player can play!
-            if (currentPlayer != currentGame?.players[currentGame?.nextToPlay].name) {
+            if (currentPlayer != currentGame?.nextToPlay) {
                 throw "It is not your turn to play!";
             }
 

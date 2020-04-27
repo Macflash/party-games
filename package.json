@@ -23,7 +23,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "/Roll5/build/",
+  "homepage": "/Games/build/",
   "eslintConfig": {
     "extends": "react-app"
   },

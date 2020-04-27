@@ -9,17 +9,16 @@ export interface IGenericPlayer {
 
 /** Generic base object for all games */
 export interface IGenericGame<T extends object = any> {
-    id: string;
-    name: string;
+    id: string; // empty at first
+    name: string; 
     state: "InPublicLobby" | "InPrivateLobby" | "InGame";
     type: string;
 
     /** Any settings used for the specific game type */
     typeSettings?: T;
 
-    /** Next to play is the only one allowed to update the server 
-     * When posting the next to play cannot be you! */
-    nextToPlay: number;
+    /** Name of the player who can play next */
+    nextToPlay: string;
     players: IGenericPlayer[];
 
     // These would need to be enforced at the server side if we support them

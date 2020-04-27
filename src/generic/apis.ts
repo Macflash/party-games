@@ -7,6 +7,14 @@ export type CB<T = any> = (newValue: T) => void;
 export type Get<ResponseType> = () => Promise<ResponseType>;
 export type Post<PayloadType, ResponseType = void> = (payload: PayloadType) => Promise<ResponseType>;
 
+export interface ICreateGameContract {
+    /** Game you want to join */
+    game: IGenericGame;
+
+    /** Name you want to use */
+    playerName: string;
+}
+
 export interface IJoinGameRequest {
     /** Game you want to join */
     gameId: string;
@@ -26,24 +34,24 @@ export interface IJoinGameResponse {
 /** Generic API for all game lobbies (Games that have not started) */
 export interface IGenericLobbyApi {
     /** Get a list of all games */
-    GetLobbies: Get<IGenericGame<any>[]>;
+    GetAll: Get<{[gameId: number]: IGenericGame<any>}>;
 
     /** Get the game object by a specific game id */
-    GetLobbyById: Post<string, IGenericGame<any>>;
+    GetById: Post<string, IGenericGame<any>>;
 
     /** Create a game on the server. Response can be empty if the server doesn't change anything. */
-    CreateLobby: Post<IGenericGame<any>>;
+    Create: Post<ICreateGameContract, ICreateGameContract>;
 
     /** Update a game on the server.
      *  This lets the host of the game change game settings and min/max players.
      *  @warn Only the host should be able to do this!
      */
-    UpdateLobby: Post<IGenericGame<any>>;
+    Update: Post<IGenericGame<any>>;
 
     /** Join a game using the game id
      *  @warn This should respect the MAX players
      */
-    JoinLobby: Post<IJoinGameRequest, IJoinGameResponse>;
+    Join: Post<IJoinGameRequest, IJoinGameResponse>;
 
     // TODO: Handle players. E.G. Kick a player or allow a player to quit?
 }
@@ -59,7 +67,7 @@ export interface IGenericPlayApi<T extends object = any> {
      *  @warn You should only be able to do this if the nextToPlay is YOU!
      *  @warn You should always have to change the nextToPlay to be someone else!
      */
-    PlayTurn: Post<IGenericGame<T>>;
+    Play: Post<IGenericGame<T>>;
 }
 
 export interface IGenericGameApi<T extends object = any>  {
