@@ -6,13 +6,13 @@ import { Header, border } from "../basic/basics";
 import { IGenericGame } from "../generic/types";
 import { GameLobby } from "./gameLobby";
 
-export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, startGame: CB<IGenericGame> }> = props => {
-    const { api } = props;
+export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChange: CB<string>, startGame: CB<IGenericGame> }> = props => {
+    const { api, yourName, nameChange, startGame } = props;
     const [games, isLoadingGames, refreshGames] = useGet(api.GetAll);
     const [currentLobby, setCurrentLobby] = React.useState<IGenericGame | null>(null);
 
     if (currentLobby) {
-        return <GameLobby yourName={props.yourName} game={currentLobby} startGame={props.startGame} />;
+        return <GameLobby yourName={yourName} game={currentLobby} startGame={startGame} />;
     }
 
     return <div>
@@ -30,7 +30,11 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, startGam
                             {game.type} |
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}
-                            <button onClick={() => setCurrentLobby(game)}>Join</button></div>
+                            <button onClick={async () => {
+                                var response = await api.Join({ gameId: game.id, playerName: yourName });
+                                nameChange(response.playerName);
+                                setCurrentLobby(response.game);
+                            }}>Join</button></div>
                     })
                     : "No games found."
             }
@@ -38,9 +42,9 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, startGam
 
         {/** Actions */}
         <div>
-            <CreateGame yourName={props.yourName} onCreate={game => { 
+            <CreateGame yourName={yourName} onCreate={game => { 
                 // TODO: update your name based on the server response!
-                api.Create({ game, playerName: props.yourName }).then(val => setCurrentLobby(val.game));
+                api.Create({ game, playerName: yourName }).then(val => setCurrentLobby(val.game));
                  }} />
             <button onClick={refreshGames}>Refresh List</button>
         </div>
