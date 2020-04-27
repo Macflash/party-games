@@ -25,15 +25,15 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChan
                     ? Object.keys(games).map(gameId => {
                         const game = games[Number(gameId)];
                         //todo this shouldn't happen
-                        if(!game){ return null; }
+                        if (!game) { return null; }
                         return <div style={{ border, padding: 10 }}>
                             {game.type} |
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}
                             <button onClick={async () => {
-                                var response = await api.Join({ gameId: game.id, playerName: yourName });
-                                nameChange(response.playerName);
-                                setCurrentLobby(response.game);
+                                const resp = await api.Join({ gameId: game.id, playerName: yourName });
+                                nameChange(resp.playerName);
+                                setCurrentLobby(resp.game);
                             }}>Join</button></div>
                     })
                     : "No games found."
@@ -42,10 +42,11 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChan
 
         {/** Actions */}
         <div>
-            <CreateGame yourName={yourName} onCreate={game => { 
-                // TODO: update your name based on the server response!
-                api.Create({ game, playerName: yourName }).then(val => setCurrentLobby(val.game));
-                 }} />
+            <CreateGame yourName={yourName} onCreate={async game => {
+                const resp = await api.Create({ game, playerName: yourName });
+                nameChange(resp.playerName);
+                setCurrentLobby(resp.game);
+            }} />
             <button onClick={refreshGames}>Refresh List</button>
         </div>
     </div>;
