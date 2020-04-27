@@ -9,20 +9,20 @@ export interface IGenericPlayer {
 
 /** Generic base object for all games */
 export interface IGenericGame<T extends object = any> {
-    gameId: string; // empty at first
-    name: string; 
-    state: "InPublicLobby" | "InPrivateLobby" | "InGame"; // Currently just... "NEW"
     type: string;
-
-    /** Any settings used for the specific game type */
     typeSettings?: T;
+}
 
-    /** Name of the player who can play next */
-    nextToPlay: string;
+export interface ServerGameObject<T extends object = any> {
+    gameId: string;
+    name: string;
+    state: "InPublicLobby" | "InPrivateLobby" | "InGame" | "GameOver"; 
     players: IGenericPlayer[];
+    maxPlayers: number;
+    nextToPlay: string;
 
-    // These would need to be enforced at the server side if we support them
-    maxPlayers?: number;
+    /** The data blob for the game */
+    data: IGenericGame<T>;
 }
 
 //TODO how to do AI players? 

@@ -1,20 +1,20 @@
 import * as React from "react";
 import { CB, IGenericLobbyApi } from "../generic/apis";
 import { Dialog, Input, Header, DropDown } from "../basic/basics";
-import { IGenericGame } from "../generic/types";
+import { ServerGameObject } from "../generic/types";
 
-export const CreateBasicGame = (): IGenericGame => ({
+export const CreateBasicGame = (): ServerGameObject => ({
     state: "InPublicLobby",
     gameId: null as any,
     players: [],
     name: "",
     nextToPlay: null as any,
-    type: null as any,
+    data: { type: null as any }
 });
 
-export const CreateGame: React.FC<{ onCreate: CB<IGenericGame>, yourName: string }> = props => {
+export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: string }> = props => {
     const [showDialog, setShowDialog] = React.useState(false);
-    const [game, setGame] = React.useState<IGenericGame>({ ...CreateBasicGame() });
+    const [game, setGame] = React.useState<ServerGameObject>({ ...CreateBasicGame() });
 
     return <>
         <button onClick={() => setShowDialog(true)}>Create Game</button>

@@ -3,13 +3,13 @@ import './App.css';
 import { Lobby } from './lobby/lobby';
 import { LocalApi } from './generic/localApi';
 import { PickName } from './lobby/pickName';
-import { IGenericGame } from './generic/types';
+import { ServerGameObject } from './generic/types';
 import { Game } from './lobby/game';
 import { OnlineApi } from './generic/onlineApi';
 
 function App() {
   const [name, setName] = React.useState<string | null>(null);
-  const [game, setGame] = React.useState<IGenericGame | null>(null);
+  const [game, setGame] = React.useState<ServerGameObject | null>(null);
   if (!name) {
     return <PickName onPick={setName} />
   }

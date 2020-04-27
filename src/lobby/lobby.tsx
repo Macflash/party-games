@@ -3,13 +3,13 @@ import { useGet } from "../generic/hooks";
 import { IGenericLobbyApi, CB } from "../generic/apis";
 import { CreateGame } from "./createGame";
 import { Header, border } from "../basic/basics";
-import { IGenericGame } from "../generic/types";
+import { ServerGameObject } from "../generic/types";
 import { GameLobby } from "./gameLobby";
 
-export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChange: CB<string>, startGame: CB<IGenericGame> }> = props => {
+export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChange: CB<string>, startGame: CB<ServerGameObject> }> = props => {
     const { api, yourName, nameChange, startGame } = props;
     const [games, isLoadingGames, refreshGames] = useGet(api.GetAll);
-    const [currentLobby, setCurrentLobby] = React.useState<IGenericGame | null>(null);
+    const [currentLobby, setCurrentLobby] = React.useState<ServerGameObject | null>(null);
 
     if (currentLobby) {
         return <GameLobby yourName={yourName} game={currentLobby} startGame={startGame} />;
@@ -27,7 +27,7 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChan
                         //todo this shouldn't happen
                         if (!game) { return null; }
                         return <div style={{ border, padding: 10 }}>
-                            {game.type} |
+                            {game.data.type} |
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}
                             <button onClick={async () => {

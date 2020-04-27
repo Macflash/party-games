@@ -1,5 +1,4 @@
 import { IGenericGameApi } from "./apis";
-import { IGenericGame } from "./types";
 import axios from "axios";
 
 export const OnlineApi: IGenericGameApi = {

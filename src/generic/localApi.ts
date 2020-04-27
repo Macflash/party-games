@@ -1,11 +1,11 @@
 import { IGenericGameApi } from "./apis";
-import { IGenericGame } from "./types";
+import { ServerGameObject } from "./types";
 
 var localGameIdCounter = 0;
-var allGames: {[id: number]: IGenericGame} = {}; // move to localstorage
+var allGames: {[id: number]: ServerGameObject} = {}; // move to localstorage
 
 var currentPlayer: string | null = null;
-var currentGame: IGenericGame | null = null; // move to local storage
+var currentGame: ServerGameObject | null = null; // move to local storage
 
 function delayed<T>(value: T, delay: number = 500) {
     return new Promise<T>(resolve => {

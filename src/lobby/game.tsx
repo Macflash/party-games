@@ -1,10 +1,10 @@
 import * as React from "react";
-import { IGenericGame } from "../generic/types";
+import { ServerGameObject } from "../generic/types";
 
-export const Game: React.FC<{ game: IGenericGame, yourName: string }> = props => {
+export const Game: React.FC<{ game: ServerGameObject, yourName: string }> = props => {
     const { game } = props;
-    let gameComponent: React.ReactNode = `Game ${game.type} was not found!`;
-    switch (game.type) {
+    let gameComponent: React.ReactNode = `Game ${game.data.type} was not found!`;
+    switch (game.data.type) {
         case "RollX":
             gameComponent = <RollXGame game={game} />
     }

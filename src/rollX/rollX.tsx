@@ -1,5 +1,5 @@
 import React from "react";
-import { IGenericGame } from "../generic/types";
+import { ServerGameObject } from "../generic/types";
 
 export interface RollXScore {
     /** Upper Section. Numbers 1-X */
@@ -15,7 +15,7 @@ export interface RollXScore {
     Chance?: number;
 }
 
-const RollX: React.FC<{ game: IGenericGame }> = props => {
+const RollX: React.FC<{ game: ServerGameObject }> = props => {
     const [rolls, setRolls] = React.useState(3);
     const [dice, setDice] = React.useState([0, 0, 0, 0, 0]);
     const [game, setGame] = React.useState<RollXScore>({

@@ -1,11 +1,11 @@
 import * as React from "react";
-import { IGenericGame } from "../generic/types";
+import { ServerGameObject } from "../generic/types";
 import { Header, border, Input } from "../basic/basics";
 import { Game } from "./game";
 import { useDirtyState } from "../generic/hooks";
 import { CB } from "../generic/apis";
 
-export const GameLobby: React.FC<{ game: IGenericGame, yourName: string, startGame: CB<IGenericGame> }> = props => {
+export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, startGame: CB<ServerGameObject> }> = props => {
     const [game, setGame, dirty, setDirty] = useDirtyState(props.game);
     const youAreHost = game.players[0].name == props.yourName;
 
@@ -14,6 +14,7 @@ export const GameLobby: React.FC<{ game: IGenericGame, yourName: string, startGa
         <div style={{ display: "flex", alignItems: "flex-start" }}>
             <div style={{ flex: "auto" }}>
                 <Header>Info</Header>
+                <div>Invite Link: {window.location.href}</div>
                 <div>Type: {game.type}</div>
                 <Input
                     name="Max Players"
