@@ -20,21 +20,21 @@ export const LocalApi: IGenericGameApi = {
         GetAll: async () => delayed(allGames),
         GetById: async id => delayed(allGames[Number(id)]),
         Create: async newGame => { 
-            newGame.game.id = localGameIdCounter.toString();
+            newGame.game.gameId = localGameIdCounter.toString();
             allGames[localGameIdCounter] = newGame.game;
             localGameIdCounter++;
             newGame.playerName = newGame.playerName + "#1";
             return newGame;
          },
         Update: async updatedGame => {
-            var existingGame = allGames[Number(updatedGame.id)];
+            var existingGame = allGames[Number(updatedGame.gameId)];
 
             // Ensure the first player (e.g. the HOST) is the only one who can update the game
             if (existingGame.players[0].name != currentPlayer) {
                 throw "Only the HOST can update the game!";
             }
 
-            allGames[Number(updatedGame.id)] = updatedGame;
+            allGames[Number(updatedGame.gameId)] = updatedGame;
         },
         Join: async request => {
             var game = allGames[Number(request.gameId)];

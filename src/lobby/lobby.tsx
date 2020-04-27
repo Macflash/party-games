@@ -31,7 +31,7 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, yourName: string, nameChan
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}
                             <button onClick={async () => {
-                                const resp = await api.Join({ gameId: game.id, playerName: yourName });
+                                const resp = await api.Join({ gameId: game.gameId, playerName: yourName });
                                 nameChange(resp.playerName);
                                 setCurrentLobby(resp.game);
                             }}>Join</button></div>

@@ -5,7 +5,7 @@ import { IGenericGame } from "../generic/types";
 
 export const CreateBasicGame = (): IGenericGame => ({
     state: "InPublicLobby",
-    id: null as any,
+    gameId: null as any,
     players: [],
     name: "",
     nextToPlay: null as any,

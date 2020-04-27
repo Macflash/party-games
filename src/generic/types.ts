@@ -9,9 +9,9 @@ export interface IGenericPlayer {
 
 /** Generic base object for all games */
 export interface IGenericGame<T extends object = any> {
-    id: string; // empty at first
+    gameId: string; // empty at first
     name: string; 
-    state: "InPublicLobby" | "InPrivateLobby" | "InGame";
+    state: "InPublicLobby" | "InPrivateLobby" | "InGame"; // Currently just... "NEW"
     type: string;
 
     /** Any settings used for the specific game type */
