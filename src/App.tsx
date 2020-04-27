@@ -20,6 +20,7 @@ function App() {
 
   return <Lobby
     yourName={name}
+    nameChange={setName}
     api={window.location.host.indexOf("localhost:3000") >= 0
       ? LocalApi.Lobby
       : OnlineApi.Lobby}
