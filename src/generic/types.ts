@@ -18,8 +18,8 @@ export interface ServerGameObject<T extends object = any> {
     name: string;
     state: "InPublicLobby" | "InPrivateLobby" | "InGame" | "GameOver"; 
     players: IGenericPlayer[];
-    maxPlayers: number;
-    nextToPlay: string;
+    maxPlayers?: number;
+    nextToPlay?: string;
 
     /** The data blob for the game */
     data: IGenericGame<T>;

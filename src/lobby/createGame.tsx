@@ -35,13 +35,13 @@ export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: st
                     })}
                 />
 
-                <DropDown name="Type" value={game.type} onChange={type => setGame({ ...game, type })}>
+                <DropDown name="Type" value={game.data.type} onChange={type => setGame({ ...game, data: {...game.data, type} })}>
                     <option value="RollX">Roll - X</option>
                     <option value="CribBIGage">CribBIGage</option>
                 </DropDown>
 
                 <div>
-                    <button disabled={!game.name || !game.type} onClick={() => props.onCreate(game)}>Create</button>
+                    <button disabled={!game.name || !game.data.type} onClick={() => props.onCreate(game)}>Create</button>
                     <button onClick={() => setShowDialog(false)}>Cancel</button>
                 </div>
             </Dialog>
