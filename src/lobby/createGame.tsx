@@ -14,7 +14,7 @@ export const CreateBasicGame = (): IGenericGame => ({
 
 export const CreateGame: React.FC<{ onCreate: CB<IGenericGame>, yourName: string }> = props => {
     const [showDialog, setShowDialog] = React.useState(false);
-    const [game, setGame] = React.useState<IGenericGame>({ ...CreateBasicGame(), players: [{ name: props.yourName }] });
+    const [game, setGame] = React.useState<IGenericGame>({ ...CreateBasicGame() });
 
     return <>
         <button onClick={() => setShowDialog(true)}>Create Game</button>
