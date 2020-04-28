@@ -73,12 +73,14 @@ function App() {
   const joinGame = async (game: ServerGameObject) => {
     // TODO: start a timer here!
     const resp = await api.Lobby.Join({ gameId: game.gameId, playerName });
+    console.log("joined game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
   };
 
   const createGame = async (game: ServerGameObject) => {
     // TODO start a timer here!
     const resp = await api.Lobby.Create({ game, playerName });
+    console.log("created game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
   };
 

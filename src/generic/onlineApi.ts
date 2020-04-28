@@ -3,11 +3,11 @@ import axios from "axios";
 import { ServerGameObject } from "./types";
 
 function encodeObjectData(game: ServerGameObject): ServerGameObject {
-    return { ...game, data: JSON.stringify(game.objectData) }
+    return { ...game, data: game.objectData ? JSON.stringify(game.objectData) : "" }
 }
 
 function decodeObjectData(game: ServerGameObject): ServerGameObject {
-    return { ...game, objectData: JSON.parse(game.data) }
+    return { ...game, objectData: game.data ? JSON.parse(game.data) : undefined }
 }
 
 
