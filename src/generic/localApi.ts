@@ -19,6 +19,7 @@ export const LocalApi: IGenericGameApi = {
     Lobby: {
         GetAll: async () => delayed(allGames),
         GetById: async id => delayed(allGames[Number(id)]),
+        GetCurrentGame: async () => delayed(currentGame!),
         Create: async newGame => { 
             newGame.game.gameId = localGameIdCounter.toString();
             allGames[localGameIdCounter] = newGame.game;

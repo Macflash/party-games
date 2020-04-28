@@ -39,6 +39,9 @@ export interface IGenericLobbyApi {
     /** Get the game object by a specific game id */
     GetById: Post<string, ServerGameObject>;
 
+    /** Get the latest game object after joining a game */
+    GetCurrentGame: Get<ServerGameObject>;
+
     /** Create a game on the server. Response can be empty if the server doesn't change anything. */
     Create: Post<ICreateGameContract, ICreateGameContract>;
 

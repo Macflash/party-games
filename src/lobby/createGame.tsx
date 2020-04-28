@@ -12,7 +12,7 @@ export const CreateBasicGame = (): ServerGameObject => ({
     data: "",
 });
 
-export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: string }> = props => {
+export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject> }> = props => {
     const [showDialog, setShowDialog] = React.useState(false);
     const [game, setGame] = React.useState<ServerGameObject>({ ...CreateBasicGame() });
 
@@ -35,7 +35,7 @@ export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject>, yourName: st
                     })}
                 />
 
-                <DropDown name="Type" value={game.objectData?.type} onChange={type => setGame({ ...game, objectData: {...game.objectData, type} })}>
+                <DropDown name="Type" value={game.objectData?.type} onChange={type => setGame({ ...game, objectData: { ...game.objectData, type } })}>
                     <option value="RollX">Roll - X</option>
                     <option value="CribBIGage">CribBIGage</option>
                 </DropDown>
