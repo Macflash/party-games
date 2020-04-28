@@ -5,9 +5,11 @@ import { Game } from "./game";
 import { useDirtyState } from "../generic/hooks";
 import { CB } from "../generic/apis";
 
-export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, startGame: CB<ServerGameObject> }> = props => {
-    const [game, setGame, dirty, setDirty] = useDirtyState(props.game);
-    const youAreHost = game.players[0].name == props.yourName;
+export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, startGame: CB<ServerGameObject>, updateGame: CB<ServerGameObject> }> = props => {
+    const {game, yourName, startGame, updateGame} = props;
+    const [dirty, setDirty] = React.useState(false);
+//    const [game, setGame, dirty, setDirty] = useDirtyState(game);
+    const youAreHost = game.players[0].name == yourName;
 
     return <div>
         <Header>Game: {game.name}</Header>
@@ -19,7 +21,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
                 <Input
                     name="Max Players"
                     value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers}
-                    onChange={maxPlayers => setGame({
+                    onChange={maxPlayers => updateGame({
                         ...game,
                         maxPlayers:
                             maxPlayers === undefined
@@ -31,10 +33,10 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
 
                 {youAreHost ? <div>
                     <button disabled={!dirty} onClick={() => { setDirty(false); }}>Update</button>
-                    <button disabled={game.players.length < 2} onClick={() => props.startGame(game)}>Start!</button>
+                    <button disabled={game.players.length < 2} onClick={() => startGame({...game, state: "InGame"})}>Start!</button>
                     <button
                         onClick={() =>
-                            setGame({
+                            updateGame({
                                 ...game,
                                 players: [
                                     ...game.players,

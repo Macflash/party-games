@@ -14,7 +14,10 @@ var currentGame: ServerGameObject | null = null;
 var setter: CB<ServerGameObject> | null = null;
 
 const refreshGame = (api: IGenericGameApi) => api.Lobby.GetCurrentGame();
-const setCurrentGame = (game: ServerGameObject) => { currentGame = game; setter?.(game); }
+const setCurrentGame = (game: ServerGameObject) => {
+  currentGame = game;
+  setter?.(game);
+}
 
 //var isRunning = false;
 const startGameTimer = (api: IGenericGameApi, playerName: string) => {
@@ -42,8 +45,8 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
       }
     }
     else if (currentGame.state == "InPrivateLobby" || currentGame.state == "InPublicLobby") {
-        console.log("In lobby. Refreshing...");
-        // we can always refresh here?
+      console.log("In lobby. Refreshing...");
+      // we can always refresh here?
       const game = await refreshGame(api);
       setCurrentGame(game);
       startGameTimer(api, playerName);
@@ -61,6 +64,7 @@ function App() {
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
   const [playerName, setYourName] = React.useState<string>("");
   const [game, setGame] = React.useState<ServerGameObject | null>(null);
+  console.log("rendering app", game, currentGame);
   setter = setGame;
 
   const setGameAndStartTimer = (game: ServerGameObject, playerName: string) => {
@@ -75,6 +79,14 @@ function App() {
     const resp = await api.Lobby.Join({ gameId: game.gameId, playerName });
     console.log("joined game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
+  };
+
+  
+  const updateGame = async (game: ServerGameObject) => {
+    // TODO: start a timer here!
+    const resp = await api.Lobby.Update(game);
+    setGame(game);
+    console.log("updated game", resp);
   };
 
   const createGame = async (game: ServerGameObject) => {
@@ -95,7 +107,7 @@ function App() {
   }
 
   if (game && (game.state == "InPrivateLobby" || game.state == "InPublicLobby")) {
-    return <GameLobby yourName={playerName} game={game} startGame={setGame} />;
+    return <GameLobby yourName={playerName} game={game} startGame={setGame} updateGame={updateGame} />;
   }
 
   return <Lobby

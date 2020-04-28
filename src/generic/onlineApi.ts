@@ -22,6 +22,7 @@ export const OnlineApi: IGenericGameApi = {
         GetCurrentGame: () => axios.get<ServerGameObject>("/Games/GetCurrentGame").then(handleSingleGameGet),
         Create: request => axios.post<ICreateGameContract>("/Games/Create", handleCreateRequest(request)).then(handleCreateAndJoinResponse),
         Join: request => axios.post<IJoinGameResponse>("/Games/Join", request).then(handleCreateAndJoinResponse),
+        Update: game => axios.post("/Games/Update", encodeObjectData(game)),
     },
     Play: {
 
