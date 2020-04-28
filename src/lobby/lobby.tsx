@@ -20,7 +20,7 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, joinGame: CB<ServerGameObj
                         const game = games[Number(gameId)];
                         //todo this shouldn't happen
                         if (!game) { return null; }
-                        return <div style={{ border, padding: 10 }}>
+                        return <div key={gameId} style={{ border, padding: 10 }}>
                             {game.objectData?.type} |
                          {game.name}:
                          {game.players.length} / {game.maxPlayers ?? "∞"}

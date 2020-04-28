@@ -26,6 +26,7 @@ export const LocalApi: IGenericGameApi = {
             localGameIdCounter++;
             newGame.playerName = newGame.playerName + "#1";
             newGame.game.players = [{ name: newGame.playerName }];
+            currentGame = newGame.game;
             return newGame;
          },
         Update: async updatedGame => {
