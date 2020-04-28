@@ -14,7 +14,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
         <div style={{ display: "flex", alignItems: "flex-start" }}>
             <div style={{ flex: "auto" }}>
                 <Header>Info</Header>
-                <div>Invite Link: {window.location.href}</div>
+               {/* { <div>Invite Link: {window.location.href}</div>} */}
                 <div>Type: {game.objectData?.type}</div>
                 <Input
                     name="Max Players"

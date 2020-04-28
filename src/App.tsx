@@ -40,6 +40,8 @@ function App() {
     return <PickName onPick={setYourName} />
   }
 
+  // TODO: handle deep links
+
   if (game && game.state == "InGame") {
     return <Game game={game} yourName={playerName} />;
   }
