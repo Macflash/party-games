@@ -18,7 +18,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
                 <div>Type: {game.objectData?.type}</div>
                 <Input
                     name="Max Players"
-                    value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers.toString()}
+                    value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers}
                     onChange={maxPlayers => setGame({
                         ...game,
                         maxPlayers:

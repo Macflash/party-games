@@ -24,7 +24,7 @@ export const CreateGame: React.FC<{ onCreate: CB<ServerGameObject> }> = props =>
                 <Input name="Name" value={game.name} onChange={name => setGame({ ...game, name })} />
                 <Input
                     name="Max Players"
-                    value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers.toString()}
+                    value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers}
                     onChange={maxPlayers => setGame({
                         ...game,
                         maxPlayers:

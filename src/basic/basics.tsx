@@ -19,7 +19,7 @@ export const Dialog: React.FC = props => {
 
 export const Input: React.FC<{
     name: string,
-    value?: string | null,
+    value?: string | number | null,
     onChange: CB<string>,
     inputProps?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 }> = props => {
