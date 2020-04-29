@@ -80,7 +80,13 @@ function App() {
     console.log("joined game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
   };
-
+  
+  const startGame = async (game: ServerGameObject) => {
+    // TODO: start a timer here!
+    const resp = await api.Lobby.Update(game);
+    setGame(game);
+    console.log("started game", resp);
+  };
   
   const updateGame = async (game: ServerGameObject) => {
     // TODO: start a timer here!
@@ -107,7 +113,7 @@ function App() {
   }
 
   if (game && (game.state == "InPrivateLobby" || game.state == "InPublicLobby")) {
-    return <GameLobby yourName={playerName} game={game} startGame={setGame} updateGame={updateGame} />;
+    return <GameLobby yourName={playerName} game={game} startGame={startGame} updateGame={updateGame} />;
   }
 
   return <Lobby
