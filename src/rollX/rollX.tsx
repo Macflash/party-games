@@ -54,7 +54,7 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
                     scoreCard={yourScoreCard}
                     dice={dice}
                     setScoreCard={newScore => {
-                        setYours(game, yourName, scores, newScore);
+                        data.scores = setYours(game, yourName, scores, newScore);
                         data.rolls = 3;
                         data.dice = createArray(diceNumber, 0);
                         game.objectData = data;
