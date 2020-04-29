@@ -25,6 +25,7 @@ export const LocalApi: IGenericGameApi = {
             allGames[localGameIdCounter] = newGame.game;
             localGameIdCounter++;
             newGame.playerName = newGame.playerName + "#1";
+            currentPlayer = newGame.playerName;
             newGame.game.players = [{ name: newGame.playerName }];
             currentGame = newGame.game;
             return newGame;
@@ -36,7 +37,7 @@ export const LocalApi: IGenericGameApi = {
             if (existingGame.players[0].name != currentPlayer) {
                 throw "Only the HOST can update the game!";
             }
-
+            currentGame = updatedGame;
             allGames[Number(updatedGame.gameId)] = updatedGame;
         },
         Join: async request => {

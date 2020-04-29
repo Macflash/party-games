@@ -2,7 +2,14 @@ import * as React from "react";
 import { ServerGameObject } from "../generic/types";
 import { CB } from "../generic/apis";
 
-export const Game: React.FC<{ game: ServerGameObject, yourName: string, updateGame: CB<ServerGameObject> }> = props => {
+export interface IGameComponentProps<T extends object> {
+    game: ServerGameObject<T>,
+    yourName: string,
+    isYourTurn: boolean,
+    updateGame: CB<ServerGameObject>,
+} 
+
+export const Game: React.FC<IGameComponentProps<any>> = props => {
     const { game } = props;
     let gameComponent: React.ReactNode = `Game ${game.objectData?.type} was not found!`;
     switch (game.objectData?.type) {

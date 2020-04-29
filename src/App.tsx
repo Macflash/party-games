@@ -8,6 +8,7 @@ import { Game } from './lobby/game';
 import { OnlineApi } from './generic/onlineApi';
 import { IGenericGameApi, CB } from './generic/apis';
 import { GameLobby } from './lobby/gameLobby';
+import { getIsYourTurn } from './utils/playerUtils';
 
 const pollWait = 1500;
 var currentGame: ServerGameObject | null = null;
@@ -26,6 +27,7 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
 
   //hmm, interval does NOT handle the time it takes to make an API call..
   setTimeout(async () => {
+    console.log("game loop", currentGame);
     // two main states
     // 1 in an active game
     if (!currentGame) { throw "no game yet!!" }
@@ -35,6 +37,7 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
       if (isYourTurn) {
         console.log("In game & your turn! No refresh");
         // DONT poll here. You need to take some action and update the server!
+        startGameTimer(api, playerName);
       }
       else {
         console.log("In game & NOT your turn. Refreshing...");
@@ -64,13 +67,11 @@ function App() {
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
   const [playerName, setYourName] = React.useState<string>("");
   const [game, setGame] = React.useState<ServerGameObject | null>(null);
-  console.log("rendering app", game, currentGame);
   setter = setGame;
 
   const setGameAndStartTimer = (game: ServerGameObject, playerName: string) => {
     setYourName(playerName);
-    setGame(game);
-    currentGame = game;
+    setCurrentGame(game);
     startGameTimer(api, playerName);
   }
 
@@ -80,26 +81,26 @@ function App() {
     console.log("joined game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
   };
-  
-  const startGame = async (game: ServerGameObject) => {
-    // TODO: start a timer here!
-    const resp = await api.Lobby.Update(game);
-    setGame(game);
-    console.log("started game", resp);
-  };
-  
-  const updateGame = async (game: ServerGameObject) => {
-    // TODO: start a timer here!
-    const resp = await api.Lobby.Update(game);
-    setGame(game);
-    console.log("updated game", resp);
-  };
 
   const createGame = async (game: ServerGameObject) => {
     // TODO start a timer here!
     const resp = await api.Lobby.Create({ game, playerName });
     console.log("created game", resp);
     setGameAndStartTimer(resp.game, resp.playerName);
+  };
+
+  const startGame = async (game: ServerGameObject) => {
+    // TODO: start a timer here!
+    const resp = await api.Lobby.Update(game);
+    setCurrentGame(game);
+    console.log("started game", resp);
+  };
+
+  const updateGame = async (game: ServerGameObject) => {
+    // TODO: start a timer here!
+    const resp = await api.Lobby.Update(game);
+    setCurrentGame({ ...game });
+    console.log("updated game", game, resp);
   };
 
   if (!playerName) {
@@ -109,7 +110,7 @@ function App() {
   // TODO: handle deep links
 
   if (game && game.state == "InGame") {
-    return <Game game={game} yourName={playerName} updateGame={updateGame} />;
+    return <Game game={game} yourName={playerName} isYourTurn={getIsYourTurn(game, playerName)} updateGame={updateGame} />;
   }
 
   if (game && (game.state == "InPrivateLobby" || game.state == "InPublicLobby")) {

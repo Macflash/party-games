@@ -23,7 +23,7 @@ export interface ServerGameObject<T extends object = any> {
 
     /** The data blob for the game */
     data: string;
-    objectData?: IGenericGame<T>;
+    objectData?: IGenericGame | T;
 }
 
 //TODO how to do AI players? 
