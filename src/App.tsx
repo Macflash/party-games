@@ -9,7 +9,7 @@ import { OnlineApi } from './generic/onlineApi';
 import { IGenericGameApi, CB } from './generic/apis';
 import { GameLobby } from './lobby/gameLobby';
 
-const pollWait = 1000;
+const pollWait = 1500;
 var currentGame: ServerGameObject | null = null;
 var setter: CB<ServerGameObject> | null = null;
 
@@ -103,7 +103,7 @@ function App() {
   // TODO: handle deep links
 
   if (game && game.state == "InGame") {
-    return <Game game={game} yourName={playerName} />;
+    return <Game game={game} yourName={playerName} updateGame={updateGame} />;
   }
 
   if (game && (game.state == "InPrivateLobby" || game.state == "InPublicLobby")) {
