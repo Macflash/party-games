@@ -1,6 +1,7 @@
 import { ServerGameObject, IGenericGame } from "../generic/types";
 
 /** Get the current player for the game */
+export const isHost = (game: ServerGameObject, playerName: string) => game.players[0].name == playerName;
 export const getPlayerIndex = (game: ServerGameObject, playerName: string) => game.players.findIndex(p => p.name == playerName)!;
 export const getCurrentPlayerIndex = (game: ServerGameObject) => getPlayerIndex(game, game.nextToPlay!)!;
 export const getCurrentPlayer = (game: ServerGameObject) => game.players[getCurrentPlayerIndex(game)];
@@ -22,12 +23,12 @@ export function getGameData<T extends object>(game:ServerGameObject<T>, initial:
 }
 
 export function getYours<T>(game: ServerGameObject, yourName: string, items: T[]): T {
-    const index = getCurrentPlayerIndex(game);
+    const index = getPlayerIndex(game, yourName);
     return items[index];
 }
 
 export function setYours<T>(game: ServerGameObject, yourName: string, items: T[], newItem: T): T[] {
-    const index = getCurrentPlayerIndex(game);
+    const index = getPlayerIndex(game, yourName);
     items[index] = newItem;
     return [...items];
 }
@@ -41,4 +42,16 @@ export function setCurrent<T>(game: ServerGameObject, items: T[], newItem: T): T
     const index = getCurrentPlayerIndex(game);
     items[index] = newItem;
     return [...items];
+}
+
+export function shouldPlayAi(game: ServerGameObject, yourName: string): boolean {
+    // basically HOST is the one who plays all AI turns
+    // so if current player is AI
+    // and we are the HOST
+    // we should play their turn
+    if(getCurrentPlayer(game)?.isAI && isHost(game, yourName)){
+        return true;
+    }
+
+    return false;
 }
