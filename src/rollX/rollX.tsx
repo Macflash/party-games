@@ -56,7 +56,7 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
     return (
         <div>
             {isYourTurn ? <Header>It's your turn!</Header> : <Header>It's {game.nextToPlay}'s turn.</Header>}
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
                 <ScoreCard
                     currentPlayerIndex={getCurrentPlayerIndex(game)}
                     yourName={yourName}
@@ -150,7 +150,7 @@ export const Die: React.FC<{ number: number, onClick?: () => void }> = props => 
 }
 
 export const Row: React.FC<{ onClick?: CB }> = props => {
-    return <div onClick={props.onClick} style={{ cursor: props.onClick ? "pointer" : undefined, backgroundColor: props.onClick ? "grey" : undefined, outline: border, margin: 2, display: "flex", justifyContent: "flex-start" }}>
+    return <div onClick={props.onClick} style={{ cursor: props.onClick ? "pointer" : undefined, outline: border, margin: 2, display: "flex", justifyContent: "flex-start" }}>
         {props.children}
     </div>
 }
@@ -175,13 +175,23 @@ export const ScoreRow: React.FC<{ name: string, scores: (number | undefined | fa
     </Row>
 }
 
+export function sumNumberDice(dice:Dice, validNumber: number){
+    return sumDice(dice.filter(d => d == validNumber));
+}
+
+export function sumDice(dice:Dice){
+    if(!dice || dice.length <= 0){ return 0;}
+
+    return dice.reduce((p, c) => c + (p || 0));
+}
+
 export const NumberScoreRow: React.FC<{ dice: Dice, isYourTurn: boolean, turnIndex: number, numberIndex: number, scores: RollXScore[], onClick?: () => void, setScoreCards: CB<RollXScore[]> }> = props => {
     console.log(props.scores);
     const clickable = props.isYourTurn && props.scores[props.turnIndex]?.Numbers?.[props.numberIndex] == undefined;
 
     return <Row onClick={clickable ? () => {
         var newScores = [...props.scores];
-        newScores[props.turnIndex].Numbers[props.numberIndex] = props.dice.filter(d => d == props.numberIndex).reduce((p, c) => c + (p || 0));
+        newScores[props.turnIndex].Numbers[props.numberIndex] = sumNumberDice(props.dice, props.numberIndex);
         props.setScoreCards(newScores);
     } : undefined}>
         <Cell width={150}>{props.numberIndex}:</Cell>

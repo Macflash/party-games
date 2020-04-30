@@ -9,6 +9,7 @@ import { OnlineApi } from './generic/onlineApi';
 import { IGenericGameApi, CB } from './generic/apis';
 import { GameLobby } from './lobby/gameLobby';
 import { getIsYourTurn } from './utils/playerUtils';
+import { CreateColors } from './basic/basics';
 
 const pollWait = 1500;
 var currentGame: ServerGameObject | null = null;
@@ -63,7 +64,24 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
   }, pollWait);
 }
 
+export const ColorContext = React.createContext(CreateColors());
+export function useColorObjects() {
+  return React.useContext(ColorContext);
+}
+export function useColors() {
+  const colors = useColorObjects();
+  return {
+    main: `rgb(${colors[0].r},${colors[0].g},${colors[0].b})`,
+    secondary: `rgb(${colors[1].r},${colors[1].g},${colors[1].b})`
+  };
+}
+
 function App() {
+  const color = useColors();
+  var html = document.getElementsByTagName('html')[0];
+  html.style.setProperty("--main-color", color.main);
+  html.style.setProperty("--secondary-color", color.secondary);
+
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
   const [playerName, setYourName] = React.useState<string>("");
   const [game, setGame] = React.useState<ServerGameObject | null>(null);
@@ -110,13 +128,13 @@ function App() {
     console.log("updated game", game, resp);
   };
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     // check for deep link
-    if(window.location.search && window.location.search.indexOf("game=") >=0){
+    if (window.location.search && window.location.search.indexOf("game=") >= 0) {
       const params = new URLSearchParams(window.location.search);
-      joinGame({gameId: params.get("game")! } as any);
+      joinGame({ gameId: params.get("game")! } as any);
     }
-  },[]);
+  }, []);
 
   if (!playerName) {
     return <PickName onPick={setYourName} />

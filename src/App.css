@@ -1,11 +1,30 @@
+html {
+  --main-color: rgb(230, 100, 101);
+  --secondary-color: rgb(145, 152, 229);
+  --light-grey: rgb(220,220,220);
+  --medium-grey: rgb(200,200,200);
+  --dark-grey: rgb(150,150,150);
+  --darker-grey: rgb(50,50,50);
+
+  --margin: 50px;
+
+  height: 100%;
+  background: linear-gradient(to bottom right, var(--main-color), var(--secondary-color));
+}
+
 body { 
-  background-color: rgb(50,50,50);
+  background-color: var(--darker-grey);
   color: white;
-  top: 0;
-  bottom: 0;
-  left:0;
-  right:0;
+  top: 15px;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
   padding: 0 10px;
+  position: absolute;
+}
+
+.app {
+  background-color: var(--darker-grey);
 }
 
 button {
@@ -13,17 +32,21 @@ button {
   color: black;
   display: inline-block;
   border: none;
-  background-color: rgb(220,220,220);
+  background-color: var(--main-color);
   padding: 10px;
   margin: 10px;
 }
 
-button:hover {
-  background-color: rgb(200,200,200);
+button:hover, button:focus {
+  background-color: var(--secondary-color);
 }
 
-button:active,button:disabled {
-  background-color: rgb(150,150,150);
+button:active {
+  background-color: var(--light-grey);
+}
+
+button:disabled {
+  background-color: var(--dark-grey);
 }
 
 button:disabled {
@@ -34,7 +57,7 @@ input, select {
   font-size: 15px;
   margin: 10px;
   padding: 5px;
-  border: 2px solid rgb(220,220,220);
+  border: 2px solid var(--main-color);
   border-radius: 2px;
   background-color: inherit;
   color: white;
@@ -42,9 +65,10 @@ input, select {
 
 input:active, input:focus, select:active, select:focus {
   color: black;
-  background-color: rgb(220,220,220);
+  background-color: var(--light-grey);
+  border: 2px solid var(--secondary-color);
 }
 
 a {
-  color: pink;
+  color: var(--main-color);
 }
