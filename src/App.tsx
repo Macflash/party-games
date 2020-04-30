@@ -27,7 +27,7 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
 
   //hmm, interval does NOT handle the time it takes to make an API call..
   setTimeout(async () => {
-    console.log("game loop", currentGame);
+    //console.log("game loop", currentGame);
     // two main states
     // 1 in an active game
     if (!currentGame) { throw "no game yet!!" }

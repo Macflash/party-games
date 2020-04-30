@@ -1,8 +1,8 @@
 import React from "react";
 import { IGameComponentProps } from "../lobby/game";
-import { IGenericGame } from "../generic/types";
-import { getGameData, getYours, IncrementNextToPlayer, setYours, getIsYourTurn } from "../utils/playerUtils";
+import { getGameData, getYours, IncrementNextToPlayer, setYours, getIsYourTurn, getCurrentPlayerIndex, shouldPlayAi } from "../utils/playerUtils";
 import { Header, border } from "../basic/basics";
+import { CB } from "../generic/apis";
 
 type Dice = number[];
 
@@ -27,36 +27,48 @@ export interface RollXScore {
     Chance?: number;
 }
 
-function createArray<T extends object | number | string>(num: number, initial?: T): T[] {
+function createArray<T extends object | number | string>(num: number, initial?: () => T): T[] {
     var arr = new Array(num);
     for (var i = 0; i < num; i++) {
-        arr[i] = initial ?? 0;
+        arr[i] = initial?.() ?? 0;
     }
 
     return arr;
 }
 
 const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
-    const { game, yourName, updateGame } = props;  
+    const { game, yourName, updateGame } = props;
     game.nextToPlay = game.nextToPlay ?? game.players[0].name;
     const isYourTurn = getIsYourTurn(game, yourName);
-    const data = getGameData(game);
-    const { dice = createArray(5, 0), rolls = 3, diceNumber = 5, scores = createArray<RollXScore>(game.players.length, { Numbers: [] }) } = data;
+    const { dice = createArray(5, () => 0), rolls = 3, diceNumber = 5, scores = createArray<RollXScore>(game.players.length, () => ({ Numbers: [] })) } = getGameData(game);
 
     const yourScoreCard = getYours(game, yourName, scores);
     console.log("getting scores", scores, yourScoreCard);
+
+    const playAi = shouldPlayAi(game, yourName);
+    React.useEffect(()=>{
+        if(playAi){
+            console.log("playing AI turn!");
+            props.updateGame(IncrementNextToPlayer(game));
+        }
+    }, [playAi])
 
     return (
         <div>
             {isYourTurn ? <Header>It's your turn!</Header> : <Header>It's {game.nextToPlay}'s turn.</Header>}
             <div style={{ display: "flex" }}>
                 <ScoreCard
-                    scoreCard={yourScoreCard}
+                    currentPlayerIndex={getCurrentPlayerIndex(game)}
+                    yourName={yourName}
+                    players={game.players.map(p => p.name)}
+                    scoreCards={scores}
                     dice={dice}
-                    setScoreCard={newScore => {
-                        data.scores = setYours(game, yourName, scores, newScore);
+                    setScoreCards={newScores => {
+                        console.log("setting scores", newScores);
+                        var data = getGameData(game);
+                        data.scores = newScores; //setYours(game, yourName, scores, newScore);
                         data.rolls = 3;
-                        data.dice = createArray(diceNumber, 0);
+                        data.dice = createArray(diceNumber, ()=>0);
                         game.objectData = data;
                         IncrementNextToPlayer(game);
                         updateGame(game);
@@ -66,12 +78,14 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
                     isYourTurn={isYourTurn}
                     dice={dice}
                     setDice={newdice => {
+                        var data = getGameData(game);
                         data.dice = newdice;
                         game.objectData = data;
                         updateGame(game);
                     }}
                     rolls={rolls}
                     setRolls={newrolls => {
+                        var data = getGameData(game);
                         data.rolls = newrolls;
                         game.objectData = data;
                         updateGame(game);
@@ -135,37 +149,69 @@ export const Die: React.FC<{ number: number, onClick?: () => void }> = props => 
     </div>
 }
 
-export const ScoreRow: React.FC<{ name: string, score?: number | false, onClick?: () => void }> = props => {
-    return <div onClick={props.score ? undefined : props.onClick} style={{ cursor: props.score ? undefined: "pointer", outline: border, margin: 2, width: 200 }}>
-        <span style={{ display: "inline-block", width: 150, borderRight: border, padding:2 }}>{props.name}:</span>
-        <span style={{display: "inline-block", padding:2}}>{props.score === false ? null : props.score}</span>
+export const Row: React.FC<{ onClick?: CB }> = props => {
+    return <div onClick={props.onClick} style={{ cursor: props.onClick ? "pointer" : undefined, backgroundColor: props.onClick ? "grey" : undefined, outline: border, margin: 2, display: "flex", justifyContent: "flex-start" }}>
+        {props.children}
     </div>
 }
 
-export const NumberScoreRow: React.FC<{ name: string, number: number, numberscores: number[], onClick?: () => void }> = props => {
-    return <div onClick={props.score ? undefined : props.onClick} style={{ cursor: props.score ? undefined: "pointer", outline: border, margin: 2, width: 200 }}>
-        <span style={{ display: "inline-block", width: 150, borderRight: border, padding:2 }}>{props.name}:</span>
-        <span style={{display: "inline-block", padding:2}}>{props.score === false ? null : props.score}</span>
+export const Cell: React.FC<{ width?: number }> = props => {
+    return <div style={{ width: props.width ?? 100, borderRight: border, padding: 2, flex: "none" }}>
+        {props.children}
     </div>
 }
 
-export const ScoreCard: React.FC<{ scoreCard: RollXScore, setScoreCard: (newscore: RollXScore) => void, dice?: number[] }> = props => {
+export const PlayerRow: React.FC<{ names: string[] }> = props => {
+    return <Row>
+        <Cell width={150} />
+        {props.names.map((n, i) => <Cell key={i}>{n}</Cell>)}
+    </Row>
+}
+
+export const ScoreRow: React.FC<{ name: string, scores: (number | undefined | false)[], onClick?: () => void }> = props => {
+    return <Row>
+        <Cell width={150}>{props.name}:</Cell>
+        {props.scores.map((score, i) => <Cell key={i}>{score === false || score == undefined ? null : score}</Cell>)}
+    </Row>
+}
+
+export const NumberScoreRow: React.FC<{ dice: Dice, isYourTurn: boolean, turnIndex: number, numberIndex: number, scores: RollXScore[], onClick?: () => void, setScoreCards: CB<RollXScore[]> }> = props => {
+    console.log(props.scores);
+    const clickable = props.isYourTurn && props.scores[props.turnIndex]?.Numbers?.[props.numberIndex] == undefined;
+
+    return <Row onClick={clickable ? () => {
+        var newScores = [...props.scores];
+        newScores[props.turnIndex].Numbers[props.numberIndex] = props.dice.filter(d => d == props.numberIndex).reduce((p, c) => c + (p || 0));
+        props.setScoreCards(newScores);
+    } : undefined}>
+        <Cell width={150}>{props.numberIndex}:</Cell>
+        {props.scores.map((score) => <Cell>{score.Numbers[props.numberIndex]}</Cell>)}
+    </Row>
+}
+
+export const ScoreCard: React.FC<{ players: string[], scoreCards: RollXScore[], setScoreCards: CB<RollXScore[]>, dice: number[], yourName: string, currentPlayerIndex: number }> = props => {
+    const isYourTurn = props.yourName == props.players[props.currentPlayerIndex];
     return <div style={{ textAlign: "left" }}>
         <div>Upper Section</div>
-        <ScoreRow score={props.scoreCard.Numbers[1]} name="Aces" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==1).reduce((prev, cur) => (prev || 0) + cur) })}/>
-        <ScoreRow score={props.scoreCard.Numbers[2]} name="Twos" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==2).reduce((prev, cur) => (prev || 0) + cur) })}/>
-        <ScoreRow score={props.scoreCard.Numbers[3]} name="Threes" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==3).reduce((prev, cur) => (prev || 0) + cur) })}/>
-        <ScoreRow score={props.scoreCard.Numbers[4]} name="Fours" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==4).reduce((prev, cur) => (prev || 0) + cur) })}/>
-        <ScoreRow score={props.scoreCard.Numbers[5]} name="Fives"onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==5).reduce((prev, cur) => (prev || 0) + cur) })} />
-        <ScoreRow score={props.scoreCard.Numbers[6]} name="Sixes" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==6).reduce((prev, cur) => (prev || 0) + cur) })}/>
+        <PlayerRow names={props.players} />
+        <NumberScoreRow numberIndex={1} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+        <NumberScoreRow numberIndex={2} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+        <NumberScoreRow numberIndex={3} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+        <NumberScoreRow numberIndex={4} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+        <NumberScoreRow numberIndex={5} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+        <NumberScoreRow numberIndex={6} dice={props.dice} isYourTurn={isYourTurn} turnIndex={props.currentPlayerIndex} scores={props.scoreCards} setScoreCards={props.setScoreCards} />
+
+        {/* <ScoreRow scores={props.scoreCard.Numbers[1]} name="Aces" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.filter(d => d==1).reduce((prev, cur) => (prev || 0) + cur) })}/> */}
 
         <div>Lower Section</div>
-        <ScoreRow score={props.scoreCard.ThreeKind} name="3 of a kind" />
-        <ScoreRow score={props.scoreCard.FourKind} name="4 of a kind" />
-        <ScoreRow score={props.scoreCard.FullHouse && 25} name="Full House" />
-        <ScoreRow score={props.scoreCard.FullHouse && 30} name="Small Straight (4)" />
-        <ScoreRow score={props.scoreCard.FullHouse && 40} name="Large Straight (5)" />
-        <ScoreRow score={props.scoreCard.Yeahtzee && 50} name="Yeahtzee" />
-        <ScoreRow score={props.scoreCard.Chance} name="Chance" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.reduce((prev, cur) => (prev || 0) + cur) })} />
+        <PlayerRow names={props.players} />
+        <ScoreRow scores={props.scoreCards.map(s => s.ThreeKind)} name="3 of a kind" />
+        <ScoreRow scores={props.scoreCards.map(s => s.FourKind)} name="4 of a kind" />
+        <ScoreRow scores={props.scoreCards.map(s => s.FullHouse && 25)} name="Full House" />
+        <ScoreRow scores={props.scoreCards.map(s => s.FullHouse && 30)} name="Small Straight (4)" />
+        <ScoreRow scores={props.scoreCards.map(s => s.FullHouse && 40)} name="Large Straight (5)" />
+        <ScoreRow scores={props.scoreCards.map(s => s.Yeahtzee && 50)} name="Yeahtzee" />
+        <ScoreRow scores={props.scoreCards.map(s => s.Chance)} name="Chance" />
+        {/* <ScoreRow scores={props.scoreCards.map(s => s.Chance)} name="Chance" onClick={() => props.setScoreCard({ ...props.scoreCard, Chance: props.dice?.reduce((prev, cur) => (prev || 0) + cur) })} /> */}
     </div>
 }

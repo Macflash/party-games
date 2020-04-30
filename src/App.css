@@ -44,3 +44,7 @@ input:active, input:focus, select:active, select:focus {
   color: black;
   background-color: rgb(220,220,220);
 }
+
+a {
+  color: pink;
+}

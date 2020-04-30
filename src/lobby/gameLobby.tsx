@@ -34,7 +34,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
                 {youAreHost ? <div>
                     {/* <button disabled={!dirty} onClick={() => { setDirty(false); }}>Update</button> */}
                     <button disabled={game.players.length < 2} onClick={() => startGame({ ...game, state: "InGame" })}>Start!</button>
-                    {/* <button
+                    <button
                         onClick={() =>
                             updateGame({
                                 ...game,
@@ -44,7 +44,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
                                 ]
                             })}>
                         Add AI player
-                    </button> */}
+                    </button>
                 </div> : null}
             </div>
 
