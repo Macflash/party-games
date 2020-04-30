@@ -6,9 +6,9 @@ import { useDirtyState } from "../generic/hooks";
 import { CB } from "../generic/apis";
 
 export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, startGame: CB<ServerGameObject>, updateGame: CB<ServerGameObject> }> = props => {
-    const {game, yourName, startGame, updateGame} = props;
+    const { game, yourName, startGame, updateGame } = props;
     // const [dirty, setDirty] = React.useState(false);
-//    const [game, setGame, dirty, setDirty] = useDirtyState(game);
+    //    const [game, setGame, dirty, setDirty] = useDirtyState(game);
     const youAreHost = game.players[0].name == yourName;
 
     return <div>
@@ -16,7 +16,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
         <div style={{ display: "flex", alignItems: "flex-start" }}>
             <div style={{ flex: "auto" }}>
                 <Header>Info</Header>
-               {/* { <div>Invite Link: {window.location.href}</div>} */}
+                {<div>Invite <a href={window.location.href + "?game=" + game.gameId}>Link</a></div>}
                 <div>Type: {game.objectData?.type}</div>
                 <Input
                     name="Max Players"
@@ -33,8 +33,8 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
 
                 {youAreHost ? <div>
                     {/* <button disabled={!dirty} onClick={() => { setDirty(false); }}>Update</button> */}
-                    <button disabled={game.players.length < 2} onClick={() => startGame({...game, state: "InGame"})}>Start!</button>
-                    <button
+                    <button disabled={game.players.length < 2} onClick={() => startGame({ ...game, state: "InGame" })}>Start!</button>
+                    {/* <button
                         onClick={() =>
                             updateGame({
                                 ...game,
@@ -44,7 +44,7 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
                                 ]
                             })}>
                         Add AI player
-                    </button>
+                    </button> */}
                 </div> : null}
             </div>
 

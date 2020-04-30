@@ -75,6 +75,13 @@ function App() {
     startGameTimer(api, playerName);
   }
 
+  const addAiPlayer = async (game: ServerGameObject) => {
+    // TODO: start a timer here!
+    const resp = await api.Lobby.Join({ gameId: game.gameId, playerName });
+    console.log("joined game", resp);
+    setGameAndStartTimer(resp.game, resp.playerName);
+  };
+
   const joinGame = async (game: ServerGameObject) => {
     // TODO: start a timer here!
     const resp = await api.Lobby.Join({ gameId: game.gameId, playerName });
@@ -102,6 +109,14 @@ function App() {
     setCurrentGame({ ...game });
     console.log("updated game", game, resp);
   };
+
+  React.useEffect(()=>{
+    // check for deep link
+    if(window.location.search && window.location.search.indexOf("game=") >=0){
+      const params = new URLSearchParams(window.location.search);
+      joinGame({gameId: params.get("game")! } as any);
+    }
+  },[]);
 
   if (!playerName) {
     return <PickName onPick={setYourName} />

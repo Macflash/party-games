@@ -142,6 +142,13 @@ export const ScoreRow: React.FC<{ name: string, score?: number | false, onClick?
     </div>
 }
 
+export const NumberScoreRow: React.FC<{ name: string, number: number, numberscores: number[], onClick?: () => void }> = props => {
+    return <div onClick={props.score ? undefined : props.onClick} style={{ cursor: props.score ? undefined: "pointer", outline: border, margin: 2, width: 200 }}>
+        <span style={{ display: "inline-block", width: 150, borderRight: border, padding:2 }}>{props.name}:</span>
+        <span style={{display: "inline-block", padding:2}}>{props.score === false ? null : props.score}</span>
+    </div>
+}
+
 export const ScoreCard: React.FC<{ scoreCard: RollXScore, setScoreCard: (newscore: RollXScore) => void, dice?: number[] }> = props => {
     return <div style={{ textAlign: "left" }}>
         <div>Upper Section</div>
