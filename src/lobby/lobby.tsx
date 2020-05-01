@@ -16,9 +16,8 @@ export const Lobby: React.FC<{ api: IGenericLobbyApi, joinGame: CB<ServerGameObj
             {isLoadingGames
                 ? "Loading..."
                 : games && Object.keys(games).length > 0
-                    ? Object.keys(games).map(gameId => {
+                    ? Object.keys(games).filter(gameId => games[Number(gameId)]?.state == "InPublicLobby").map(gameId => {
                         const game = games[Number(gameId)];
-                        //todo this shouldn't happen
                         if (!game) { return null; }
                         return <div key={gameId} style={{ border, padding: 10 }}>
                             {game.objectData?.type} |
