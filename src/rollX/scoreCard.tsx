@@ -83,6 +83,7 @@ export const PathScoreRow: React.FC<{
     dice: Dice,
     valid: boolean,
     wouldScore: number,
+    prohibited?: boolean,
 
     path: string,
     yourField: <T>(path: string, defaultValue?: T | undefined) => [T, CB<T>],
@@ -90,8 +91,9 @@ export const PathScoreRow: React.FC<{
     allPlayersField: <T>(path: string) => [T[], (p: string, v: T) => void],
     endYourTurn: () => void,
 }> = props => {
+    const wouldScore = props.valid ? props.wouldScore : 0;
     const [yourScore, setYourScore] = props.yourField<number | undefined>(props.path, undefined);
-    const clickable = props.isYourTurn && noUnrolledDice(props.dice) && props.valid && yourScore == undefined;
+    const clickable = props.isYourTurn && noUnrolledDice(props.dice)  && yourScore == undefined && (!props.prohibited || props.valid);
     const [allScores] = props.allPlayersField<number | undefined>(props.path);
 
     return <Row>
@@ -100,10 +102,10 @@ export const PathScoreRow: React.FC<{
             if (clickable && props.isYourTurn && props.players[i] == props.nextToPlay) {
                 return <Cell><button
                     onClick={() => {
-                        setYourScore(props.wouldScore);
+                        setYourScore(wouldScore);
                         props.endYourTurn();
                     }}
-                    style={{ height: "inherit", padding: 2, margin: 0, width: "100%" }}>Score {props.wouldScore}</button></Cell>
+                    style={{ height: "inherit", padding: 2, margin: 0, width: "100%" }}>Score {wouldScore}</button></Cell>
             }
 
             return <Cell key={i}>{score}</Cell>
@@ -234,9 +236,9 @@ export const ScoreCard: React.FC<{
         <PathScoreRow {...props} name="Lg Straight (5)" path={straight5path} valid={isStraightX(dice, 5)} wouldScore={40} />
 
         <PathScoreRow {...props} name="Yeah! (5 of a kind)" path={yeahtzeepath} valid={isXofKind(dice, 5)} wouldScore={50} />
-        <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} />
-        <PathScoreRow {...props} name="Yeah! Bonus 2" path={yeahtzeeBonuspath(2)} valid={props.yourField(yeahtzeeBonuspath(1)) && isXofKind(dice, 5)} wouldScore={100} />
-        <PathScoreRow {...props} name="Yeah! Bonus 3" path={yeahtzeeBonuspath(3)} valid={props.yourField(yeahtzeeBonuspath(2)) && isXofKind(dice, 5)} wouldScore={100} />
+        <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} prohibited valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} />
+        <PathScoreRow {...props} name="Yeah! Bonus 2" path={yeahtzeeBonuspath(2)} prohibited valid={props.yourField(yeahtzeeBonuspath(1)) && isXofKind(dice, 5)} wouldScore={100} />
+        <PathScoreRow {...props} name="Yeah! Bonus 3" path={yeahtzeeBonuspath(3)} prohibited valid={props.yourField(yeahtzeeBonuspath(2)) && isXofKind(dice, 5)} wouldScore={100} />
 
         <PathScoreRow {...props} name="Chance" path={chancePath} valid={true} wouldScore={sumDice(dice)} />
 

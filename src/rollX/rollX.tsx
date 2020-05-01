@@ -102,3 +102,5 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
 
     );
 }
+
+export default RollX;

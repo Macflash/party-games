@@ -33,8 +33,6 @@ export const DiceArea: React.FC<{
     </div>
 }
 
-export default RollX;
-
 export const Die: React.FC<{ number: number, onClick?: () => void }> = props => {
     const size = 30;
     return <div style={{

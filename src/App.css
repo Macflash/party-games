@@ -25,6 +25,11 @@ body {
   position: absolute;
 }
 
+#root {
+  height: 100%;
+  overflow: auto;
+}
+
 .app {
   background-color: var(--darker-grey);
 }

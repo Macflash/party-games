@@ -72,10 +72,12 @@ export function useColors() {
 
 function App() {
   const color = useColors();
-  var html = document.getElementsByTagName('html')[0];
-  html.style.setProperty("--main-color", color.main);
-  html.style.setProperty("--secondary-color", color.secondary);
-  html.style.setProperty("--direction", PickRandom(["to bottom right", "to top right", "to right", "to bottom left", "to bottom"]));
+  React.useEffect(() => {
+    var html = document.getElementsByTagName('html')[0];
+    html.style.setProperty("--main-color", color.main);
+    html.style.setProperty("--secondary-color", color.secondary);
+    html.style.setProperty("--direction", PickRandom(["to bottom right", "to top right", "to right", "to bottom left", "to bottom"]));
+  }, []);
 
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
   const [playerName, setYourName] = React.useState<string>("");
