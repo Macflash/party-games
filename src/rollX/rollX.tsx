@@ -125,7 +125,7 @@ export const DiceArea: React.FC<{
         <button
             onClick={props.isYourTurn ? () => {
                 props.setRolls(props.rolls - 1);
-                props.setDice?.(props.dice.map(d => d === 0 ? Math.floor(Math.random() * 5) + 1 : d));
+                props.setDice?.(props.dice.map(d => d === 0 ? Math.floor(Math.random() * 6) + 1 : d));
             } : undefined}
             disabled={!props.isYourTurn || !props.setDice || props.dice.filter(d => d === 0).length <= 0}
         >
