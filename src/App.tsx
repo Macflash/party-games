@@ -85,6 +85,7 @@ function App() {
   setter = setGame;
 
   const setGameAndStartTimer = (game: ServerGameObject, playerName: string) => {
+    localStorage.setItem("yourname", playerName);
     setYourName(playerName);
     setCurrentGame(game);
     startGameTimer(api, playerName);
@@ -127,10 +128,20 @@ function App() {
 
   React.useEffect(() => {
     // check for deep link
-    if (window.location.search && window.location.search.indexOf("game=") >= 0) {
-      const params = new URLSearchParams(window.location.search);
-      joinGame({ gameId: params.get("game")! } as any);
-    }
+    // FIRST check you ARENT in a game already...
+    refreshGame(api).then(g => {
+      var localName = localStorage.getItem("yourname");
+      if(g && localName){
+        setGameAndStartTimer(g, localName);
+      }
+      else {
+        if (window.location.search && window.location.search.indexOf("game=") >= 0) {
+          const params = new URLSearchParams(window.location.search);
+          joinGame({ gameId: params.get("game")! } as any);
+        }
+      }
+    });
+
   }, []);
 
   if (!playerName) {
