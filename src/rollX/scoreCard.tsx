@@ -93,7 +93,7 @@ export const PathScoreRow: React.FC<{
 }> = props => {
     const wouldScore = props.valid ? props.wouldScore : 0;
     const [yourScore, setYourScore] = props.yourField<number | undefined>(props.path, undefined);
-    const clickable = props.isYourTurn && noUnrolledDice(props.dice)  && yourScore == undefined && (!props.prohibited || props.valid);
+    const clickable = props.isYourTurn && noUnrolledDice(props.dice) && yourScore == undefined && (!props.prohibited || props.valid);
     const [allScores] = props.allPlayersField<number | undefined>(props.path);
 
     return <Row>
@@ -195,11 +195,32 @@ export const ScoreCard: React.FC<{
     const [straight5] = props.allPlayersField<number>(straight5path);
     const [yeahtzee] = props.allPlayersField<number>(yeahtzeepath);
     const [chance] = props.allPlayersField<number>(chancePath);
+    const [yeahtzeebonuses1] = props.allPlayersField<number>(yeahtzeeBonuspath(1));
+    const [yeahtzeebonuses2] = props.allPlayersField<number>(yeahtzeeBonuspath(2));
+    const [yeahtzeebonuses3] = props.allPlayersField<number>(yeahtzeeBonuspath(3));
 
     const lowerTotals = props.players.map((p, i) => {
-        return (kind3[i] || 0) + (kind4[i] || 0) + (fullhouse[i] || 0) + (straight4[i] || 0) + (straight5[i] || 0) + (yeahtzee[i] || 0) + (chance[i] || 0);
+        return (kind3[i] || 0)
+            + (kind4[i] || 0)
+            + (fullhouse[i] || 0)
+            + (straight4[i] || 0)
+            + (straight5[i] || 0)
+            + (yeahtzee[i] || 0)
+            + (chance[i] || 0)
+            + (yeahtzeebonuses1[i] || 0)
+            + (yeahtzeebonuses2[i] || 0)
+            + (yeahtzeebonuses3[i] || 0)
+            ;
     });
 
+    let anyYeahtzee = false;
+    yeahtzee.forEach(y => { if (y) { anyYeahtzee = true; } });
+
+    let anyYeahtzee2 = false;
+    yeahtzeebonuses1.forEach(y => { if (y) { anyYeahtzee2 = true; } });
+
+    let anyYeahtzee3 = false;
+    yeahtzeebonuses2.forEach(y => { if (y) { anyYeahtzee3 = true; } });
 
     return <div style={{ textAlign: "left" }}>
         <div>Upper Section</div>
@@ -219,10 +240,6 @@ export const ScoreCard: React.FC<{
             <Cell width={firstCellWidth}>Bonus:</Cell>
             {upperBonuses.map((c, i) => <Cell key={i}>{c}</Cell>)}
         </Row>
-        <Row>
-            <Cell width={firstCellWidth}>Total:</Cell>
-            {upperFull.map((c, i) => <Cell key={i}>{c}</Cell>)}
-        </Row>
 
         <br />
 
@@ -236,9 +253,9 @@ export const ScoreCard: React.FC<{
         <PathScoreRow {...props} name="Lg Straight (5)" path={straight5path} valid={isStraightX(dice, 5)} wouldScore={40} />
 
         <PathScoreRow {...props} name="Yeah! (5 of a kind)" path={yeahtzeepath} valid={isXofKind(dice, 5)} wouldScore={50} />
-        <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} prohibited valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} />
-        <PathScoreRow {...props} name="Yeah! Bonus 2" path={yeahtzeeBonuspath(2)} prohibited valid={props.yourField(yeahtzeeBonuspath(1)) && isXofKind(dice, 5)} wouldScore={100} />
-        <PathScoreRow {...props} name="Yeah! Bonus 3" path={yeahtzeeBonuspath(3)} prohibited valid={props.yourField(yeahtzeeBonuspath(2)) && isXofKind(dice, 5)} wouldScore={100} />
+        {anyYeahtzee ? <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} prohibited valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} /> : null}
+        {anyYeahtzee2 ? <PathScoreRow {...props} name="Yeah! Bonus 2" path={yeahtzeeBonuspath(2)} prohibited valid={props.yourField(yeahtzeeBonuspath(1)) && isXofKind(dice, 5)} wouldScore={100} /> : null}
+        {anyYeahtzee3 ? <PathScoreRow {...props} name="Yeah! Bonus 3" path={yeahtzeeBonuspath(3)} prohibited valid={props.yourField(yeahtzeeBonuspath(2)) && isXofKind(dice, 5)} wouldScore={100} /> : null}
 
         <PathScoreRow {...props} name="Chance" path={chancePath} valid={true} wouldScore={sumDice(dice)} />
 
