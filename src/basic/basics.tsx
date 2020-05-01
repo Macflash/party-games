@@ -69,14 +69,14 @@ export function HSVtoRGB(h: number, s: number, v: number) {
     };
 }
 
-export function CreateColors() {
+export function CreateColors(h1 = Math.random()) {
     const s1 = .56;
     const s2 = .36;
 
     const v1 = .9;
     const v2 = .89;
 
-    const h1 = Math.random();
+    //const h1 = Math.random();
     const h2 = Math.abs(h1 - .337);
 
     return [

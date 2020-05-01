@@ -70,13 +70,24 @@ export function useColors() {
   };
 }
 
+function setAppColors(h: number){
+  var colors = CreateColors(h);
+  var html = document.getElementsByTagName('html')[0];
+  html.style.setProperty("--main-color", `rgb(${colors[0].r},${colors[0].g},${colors[0].b})`);
+  html.style.setProperty("--secondary-color", `rgb(${colors[1].r},${colors[1].g},${colors[1].b})`);
+}
+
 function App() {
-  const color = useColors();
   React.useEffect(() => {
+    let startingHue = Math.random();
+    setAppColors(startingHue);
     var html = document.getElementsByTagName('html')[0];
-    html.style.setProperty("--main-color", color.main);
-    html.style.setProperty("--secondary-color", color.secondary);
     html.style.setProperty("--direction", PickRandom(["to bottom right", "to top right", "to right", "to bottom left", "to bottom"]));
+
+    setInterval(() => {
+      startingHue += .001;
+     setAppColors(startingHue);
+    }, 250);
   }, []);
 
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
