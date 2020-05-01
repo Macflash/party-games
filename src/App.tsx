@@ -10,6 +10,7 @@ import { IGenericGameApi, CB } from './generic/apis';
 import { GameLobby } from './lobby/gameLobby';
 import { getIsYourTurn } from './utils/playerUtils';
 import { CreateColors } from './basic/basics';
+import { PickRandom } from './utils/randomUtil';
 
 const pollWait = 1500;
 var currentGame: ServerGameObject | null = null;
@@ -23,12 +24,7 @@ const setCurrentGame = (game: ServerGameObject) => {
 
 //var isRunning = false;
 const startGameTimer = (api: IGenericGameApi, playerName: string) => {
-  //if (isRunning) { throw "Loop was already running!"; }
-  //api and name WONT change from this point on
-
-  //hmm, interval does NOT handle the time it takes to make an API call..
   setTimeout(async () => {
-    //console.log("game loop", currentGame);
     // two main states
     // 1 in an active game
     if (!currentGame) { throw "no game yet!!" }
@@ -50,14 +46,12 @@ const startGameTimer = (api: IGenericGameApi, playerName: string) => {
     }
     else if (currentGame.state == "InPrivateLobby" || currentGame.state == "InPublicLobby") {
       console.log("In lobby. Refreshing...");
-      // we can always refresh here?
       const game = await refreshGame(api);
       setCurrentGame(game);
       startGameTimer(api, playerName);
     }
     else {
       console.log("Game is probably over! Cancel the loop.");
-      //isRunning = false;
     }
 
     // 2 In the game lobby
@@ -81,6 +75,7 @@ function App() {
   var html = document.getElementsByTagName('html')[0];
   html.style.setProperty("--main-color", color.main);
   html.style.setProperty("--secondary-color", color.secondary);
+  html.style.setProperty("--direction", PickRandom(["to bottom right", "to top right", "to right", "to bottom left", "to bottom"]));
 
   const api = window.location.host.indexOf("localhost:3000") >= 0 ? LocalApi : OnlineApi;
   const [playerName, setYourName] = React.useState<string>("");

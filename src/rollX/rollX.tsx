@@ -3,8 +3,7 @@ import { IGameComponentProps } from "../lobby/game";
 import { createUtils, useAI } from "../utils/playerUtils";
 import { Header } from "../basic/basics";
 import { ScoreCard } from "./scoreCard";
-
-export type Dice = number[];
+import { Dice, DiceArea } from "./dice";
 
 export interface IRollXGameData {
     diceNumber: number;
@@ -38,11 +37,11 @@ function createArray<T extends object | number | string>(num: number, initial?: 
 
 const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
     const utils = createUtils(props);
-    const { 
-        yourField, 
+    const {
+        yourField,
         globalField,
-         allPlayersField, 
-         playAi, isYourTurn, nextToPlay, incrementPlayer, playerNames, updateGame } = utils;
+        allPlayersField,
+        playAi, isYourTurn, nextToPlay, incrementPlayer, playerNames, updateGame } = utils;
     const [numberOfRolls] = globalField<number>("numberOfRolls", 3);
     const [numberOfDice] = globalField<number>("numberOfDice", 5);
 
@@ -69,11 +68,11 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
         <div>
             {isYourTurn ? <Header>It's your turn!</Header> : <Header>It's {nextToPlay}'s turn.</Header>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-                <ScoreCard 
+                <ScoreCard
                     endYourTurn={endYourTurn}
-                    yourField={yourField} 
+                    yourField={yourField}
                     globalField={globalField}
-                    allPlayersField={allPlayersField} 
+                    allPlayersField={allPlayersField}
 
                     players={playerNames}
                     dice={dice}
@@ -102,57 +101,4 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
         </div>
 
     );
-}
-
-export const DiceArea: React.FC<{
-    isYourTurn: boolean,
-    dice: number[],
-    setDice: (newDice: number[]) => void,
-    rolls: number,
-    setRolls: (newRolls: number) => void,
-}> = props => {
-    return <div style={{ margin: 20, width: 300 }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {props.dice.map((d, i) => <Die key={i} number={d} onClick={props.isYourTurn ? () => {
-                if (props.rolls > 0) {
-                    var newdice = [...props.dice];
-                    newdice[i] = 0;
-                    props.setDice?.(newdice);
-                }
-            } : undefined} />)}
-        </div>
-
-        <button
-            onClick={props.isYourTurn ? () => {
-                props.setRolls(props.rolls - 1);
-                props.setDice?.(props.dice.map(d => d === 0 ? Math.floor(Math.random() * 6) + 1 : d));
-            } : undefined}
-            disabled={!props.isYourTurn || !props.setDice || props.dice.filter(d => d === 0).length <= 0}
-        >
-            Roll ({props.rolls})
-        </button>
-    </div>
-}
-
-export default RollX;
-
-export const Die: React.FC<{ number: number, onClick?: () => void }> = props => {
-    const size = 30;
-    return <div style={{
-        color: "black",
-        cursor: "pointer",
-        border: "2px solid white",
-        width: size,
-        height: size,
-        textAlign: "center",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: props.number === 0 ? "lightgrey" : "white",
-        borderRadius: 2,
-    }}
-        onClick={props.onClick}
-    >
-        {props.number === 0 ? "?" : props.number}
-    </div>
 }

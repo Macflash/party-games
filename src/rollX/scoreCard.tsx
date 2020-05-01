@@ -1,7 +1,7 @@
 import React from "react";
 import { CB } from "../generic/apis";
 import { border } from "../basic/basics";
-import { Dice } from "./rollX";
+import { Dice } from "./dice";
 
 const firstCellWidth = 150;
 
@@ -162,6 +162,7 @@ const fullhousePath = "fullhouse";
 const straight4path = "straight4";
 const straight5path = "straight5";
 const yeahtzeepath = "yeahtzee";
+const yeahtzeeBonuspath = (number: number) => "yeahtzeeBonus" + number;
 const chancePath = "chance";
 
 export const ScoreCard: React.FC<{
@@ -221,7 +222,7 @@ export const ScoreCard: React.FC<{
             {upperFull.map((c, i) => <Cell key={i}>{c}</Cell>)}
         </Row>
 
-        {/* <ScoreRow scores={scoreCard.Numbers[1]} name="Aces" onClick={() => setScoreCard({ ...scoreCard, Chance: dice?.filter(d => d==1).reduce((prev, cur) => (prev || 0) + cur) })}/> */}
+        <br />
 
         <div>Lower Section</div>
         <PathScoreRow {...props} name="3 of a kind" path={kind3path} valid={isXofKind(dice, 3)} wouldScore={sumDice(dice)} />
@@ -233,6 +234,9 @@ export const ScoreCard: React.FC<{
         <PathScoreRow {...props} name="Lg Straight (5)" path={straight5path} valid={isStraightX(dice, 5)} wouldScore={40} />
 
         <PathScoreRow {...props} name="Yeah! (5 of a kind)" path={yeahtzeepath} valid={isXofKind(dice, 5)} wouldScore={50} />
+        <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} />
+        <PathScoreRow {...props} name="Yeah! Bonus 2" path={yeahtzeeBonuspath(2)} valid={props.yourField(yeahtzeeBonuspath(1)) && isXofKind(dice, 5)} wouldScore={100} />
+        <PathScoreRow {...props} name="Yeah! Bonus 3" path={yeahtzeeBonuspath(3)} valid={props.yourField(yeahtzeeBonuspath(2)) && isXofKind(dice, 5)} wouldScore={100} />
 
         <PathScoreRow {...props} name="Chance" path={chancePath} valid={true} wouldScore={sumDice(dice)} />
 

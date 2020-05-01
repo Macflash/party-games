@@ -8,8 +8,10 @@ html {
 
   --margin: 50px;
 
+  --direction: to bottom right;
+
   height: 100%;
-  background: linear-gradient(to bottom right, var(--main-color), var(--secondary-color));
+  background: linear-gradient(var(--direction), var(--main-color), var(--secondary-color));
 }
 
 body { 
