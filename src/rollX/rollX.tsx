@@ -39,6 +39,7 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
     const utils = createUtils(props);
     const {
         yourField,
+        currentPlayerField,
         globalField,
         allPlayersField,
         playAi, isYourTurn, nextToPlay, incrementPlayer, playerNames, updateGame } = utils;
@@ -48,11 +49,15 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
     const [dice, setDice] = globalField<number[]>("dice", createArray(numberOfDice, () => 0));
     const [rolls, setRolls] = globalField<number>("rolls", numberOfRolls);
 
-    const [yourNumberScores, setYourNumberScores] = yourField<number[]>("numberScores", []);
+    const [allTurns] = allPlayersField<number>("turn");
+    const [turn, setTurn] = currentPlayerField<number>("turn", 0);
+
+    const [yourNumberScores, setYourNumberScores] = currentPlayerField<number[]>("numberScores", []);
     const [allNumberScores] = allPlayersField<number[]>("numberScores");
 
     useAI(playAi, () => {
         // Just advance the game for now!
+        setTurn(turn + 1);
         incrementPlayer();
         updateGame();
     });
@@ -60,15 +65,21 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
     const endYourTurn = () => {
         setRolls(numberOfRolls);
         setDice(createArray(numberOfDice, () => 0))
+        setTurn(turn + 1);
         incrementPlayer();
         updateGame();
     }
+
+    const gameOver = allTurns.filter(t => t == 13).length == playerNames.length;
 
     return (
         <div>
             {isYourTurn ? <Header>It's your turn!</Header> : <Header>It's {nextToPlay}'s turn.</Header>}
             <div style={{ display: "flex", flexWrap: "wrap" }}>
+
                 <ScoreCard
+                    gameOver={gameOver}
+
                     endYourTurn={endYourTurn}
                     yourField={yourField}
                     globalField={globalField}
@@ -85,7 +96,8 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
                         endYourTurn();
                     }}
                 />
-                <DiceArea
+
+                {gameOver ? null : <DiceArea
                     isYourTurn={isYourTurn}
                     dice={dice}
                     setDice={newDice => {
@@ -96,7 +108,9 @@ const RollX: React.FC<IGameComponentProps<IRollXGameData>> = props => {
                     setRolls={newRolls => {
                         setRolls(newRolls);
                         updateGame();
-                    }} />
+                    }}
+                />}
+
             </div>
         </div>
 

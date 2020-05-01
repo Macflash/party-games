@@ -1,6 +1,6 @@
 import React from "react";
 import { CB } from "../generic/apis";
-import { border } from "../basic/basics";
+import { border, Header } from "../basic/basics";
 import { Dice } from "./dice";
 
 const firstCellWidth = 150;
@@ -169,6 +169,7 @@ const yeahtzeeBonuspath = (number: number) => "yeahtzeeBonus" + number;
 const chancePath = "chance";
 
 export const ScoreCard: React.FC<{
+    gameOver?: boolean,
     players: string[],
     isYourTurn: boolean,
     nextToPlay: string,
@@ -223,7 +224,20 @@ export const ScoreCard: React.FC<{
     let anyYeahtzee3 = false;
     yeahtzeebonuses2.forEach(y => { if (y) { anyYeahtzee3 = true; } });
 
+    let winner: string | null = null;
+    let maxScore = 0;
+    if(props.gameOver){
+        for(var i = 0; i < players.length; i++){
+            const score = lowerTotals[i] + upperFull[i];
+            if(score > maxScore){
+                winner = players[i];
+                maxScore = score;
+            }
+        }
+    }
+
     return <div style={{ textAlign: "left" }}>
+        {props.gameOver ? <Header>{winner} has won!!</Header> : null}
         <div>Upper Section</div>
         <PlayerRow names={players} />
         <NumberScoreRow numberIndex={1} {...props} />

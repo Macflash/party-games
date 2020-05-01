@@ -86,6 +86,15 @@ export const createUtils = (props: IGameComponentProps) => {
     }
 
     // Get and set your PERSONAL data
+    function setCurrent<T>(path: string, newValue: T) {
+        set(game, playerPath(game.nextToPlay!) + path, newValue);
+    }
+
+    function getCurrent<T>(path: string, defaultValue?: T) {
+        return get(game, playerPath(game.nextToPlay!)  + path, defaultValue) as T;
+    }
+
+    // Get and set your PERSONAL data
     function setYours<T>(path: string, newValue: T) {
         set(game, yourPath + path, newValue);
     }
@@ -117,6 +126,13 @@ export const createUtils = (props: IGameComponentProps) => {
         ];
     }
 
+    function currentPlayerField<T>(path: string, defaultValue?: T): [T, CB<T>] {
+        return [
+            getCurrent(path, defaultValue),
+            (value: T) => setCurrent(path, value)
+        ];
+    }
+
     function allPlayersField<T>(path: string): [T[], (p: string, v: T) => void] {
         return [
             getPlayers(path),
@@ -130,6 +146,7 @@ export const createUtils = (props: IGameComponentProps) => {
     return {
         yourField,
         globalField,
+        currentPlayerField,
         allPlayersField,
 
         setGlobal,
