@@ -11,8 +11,8 @@ export const Row: React.FC<{ onClick?: CB }> = props => {
     </div>
 }
 
-export const Cell: React.FC<{ width?: number }> = props => {
-    return <div style={{ width: props.width ?? 100, borderRight: border, padding: 2, flex: "none" }}>
+export const Cell: React.FC<{ width?: number, hover?: string }> = props => {
+    return <div title={props.hover} style={{ width: props.width ?? 100, borderRight: border, padding: 2, flex: "none" }}>
         {props.children}
     </div>
 }
@@ -76,6 +76,7 @@ export const NumberScoreRow: React.FC<{
 
 export const PathScoreRow: React.FC<{
     name: string,
+    description?: string,
     players: string[],
     isYourTurn: boolean,
     nextToPlay: string,
@@ -97,7 +98,7 @@ export const PathScoreRow: React.FC<{
     const [allScores] = props.allPlayersField<number | undefined>(props.path);
 
     return <Row>
-        <Cell width={firstCellWidth}>{props.name}:</Cell>
+        <Cell width={firstCellWidth} hover={props.description}>{props.name}:</Cell>
         {allScores.map((score, i) => {
             if (clickable && props.isYourTurn && props.players[i] == props.nextToPlay) {
                 return <Cell><button
@@ -244,13 +245,13 @@ export const ScoreCard: React.FC<{
         <br />
 
         <div>Lower Section</div>
-        <PathScoreRow {...props} name="3 of a kind" path={kind3path} valid={isXofKind(dice, 3)} wouldScore={sumDice(dice)} />
-        <PathScoreRow {...props} name="4 of a kind" path={kind4path} valid={isXofKind(dice, 4)} wouldScore={sumDice(dice)} />
+        <PathScoreRow {...props} name="3 of a kind" description="Add total of all dice" path={kind3path} valid={isXofKind(dice, 3)} wouldScore={sumDice(dice)} />
+        <PathScoreRow {...props} name="4 of a kind" description="Add total of all dice" path={kind4path} valid={isXofKind(dice, 4)} wouldScore={sumDice(dice)} />
 
-        <PathScoreRow {...props} name="Full House" path={fullhousePath} valid={isFullHouse(dice)} wouldScore={25} />
+        <PathScoreRow {...props} name="Full House" description="SCORE 25" path={fullhousePath} valid={isFullHouse(dice)} wouldScore={25} />
 
-        <PathScoreRow {...props} name="Sm Straight (4)" path={straight4path} valid={isStraightX(dice, 4)} wouldScore={30} />
-        <PathScoreRow {...props} name="Lg Straight (5)" path={straight5path} valid={isStraightX(dice, 5)} wouldScore={40} />
+        <PathScoreRow {...props} name="Sm Straight (4)" description="SCORE 30" path={straight4path} valid={isStraightX(dice, 4)} wouldScore={30} />
+        <PathScoreRow {...props} name="Lg Straight (5)" description="SCORE 40" path={straight5path} valid={isStraightX(dice, 5)} wouldScore={40} />
 
         <PathScoreRow {...props} name="Yeah! (5 of a kind)" path={yeahtzeepath} valid={isXofKind(dice, 5)} wouldScore={50} />
         {anyYeahtzee ? <PathScoreRow {...props} name="Yeah! Bonus 1" path={yeahtzeeBonuspath(1)} prohibited valid={props.yourField(yeahtzeepath) && isXofKind(dice, 5)} wouldScore={100} /> : null}
