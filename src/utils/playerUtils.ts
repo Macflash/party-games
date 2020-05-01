@@ -1,4 +1,7 @@
+import { set, get } from "lodash";
 import { ServerGameObject, IGenericGame } from "../generic/types";
+import { CB } from "../generic/apis";
+import React from "react";
 
 /** Get the current player for the game */
 export const isHost = (game: ServerGameObject, playerName: string) => game.players[0].name == playerName;
@@ -18,7 +21,7 @@ export const IncrementNextToPlayer = (game: ServerGameObject) => {
     return game;
 }
 
-export function getGameData<T extends object>(game:ServerGameObject<T>, initial: T = {} as any): T {
+export function getGameData<T extends object>(game: ServerGameObject<T>, initial: T = {} as any): T {
     return game.objectData as T || initial;
 }
 
@@ -49,9 +52,105 @@ export function shouldPlayAi(game: ServerGameObject, yourName: string): boolean 
     // so if current player is AI
     // and we are the HOST
     // we should play their turn
-    if(getCurrentPlayer(game)?.isAI && isHost(game, yourName)){
+    if (getCurrentPlayer(game)?.isAI && isHost(game, yourName)) {
         return true;
     }
 
     return false;
+}
+
+export interface IGameComponentProps {
+    game: ServerGameObject,
+    yourName: string,
+    isYourTurn: boolean,
+    updateGame: CB<ServerGameObject>,
+} 
+
+export const createUtils = (props: IGameComponentProps) => {
+    const {game, yourName, updateGame} = props;
+
+    // init next to play if not set
+    game.nextToPlay = game.nextToPlay ?? game.players[0].name;
+
+    const globalPath = `objectData.global.`;
+    const playerPath = (name: string) => `objectData.playerData[${name}].`;
+    const yourPath = playerPath(yourName);
+
+    // Get and set GLOBAL data
+    function setGlobal<T>(path: string, newValue: T) {
+        set(game, globalPath + path, newValue);
+    }
+
+    function getGlobal<T>(path: string, defaultValue?: T) {
+        return get(game, globalPath + path, defaultValue) as T;
+    }
+
+    // Get and set your PERSONAL data
+    function setYours<T>(path: string, newValue: T) {
+        set(game, yourPath + path, newValue);
+    }
+
+    function getYours<T>(path: string, defaultValue?: T) {
+        return get(game, yourPath + path, defaultValue) as T;
+    }
+
+    // Get and set data for ALL PLAYERS
+    function setPlayers<T>(path: string, player: string, newValue: T) {
+        set(game, playerPath(player) + path, newValue);
+    }
+
+    function getPlayers<T>(path: string) {
+        return game.players.map(player => get(game, playerPath(player.name) + path));
+    }
+
+    function yourField<T>(path: string, defaultValue?: T): [T, CB<T>] {
+        return [
+            getYours(path, defaultValue),
+            (value: T) => setYours(path, value)
+        ];
+    }
+
+    function globalField<T>(path: string, defaultValue?: T): [T, CB<T>] {
+        return [
+            getGlobal(path, defaultValue),
+            (value: T) => setGlobal(path, value)
+        ];
+    }
+
+    function allPlayersField<T>(path: string): [T[], (p: string, v: T) => void] {
+        return [
+            getPlayers(path),
+            (player: string, value: T) => setPlayers(path, player, value)
+        ];
+    }
+
+    const isYourTurn = getIsYourTurn(game, yourName);
+    const playAi = shouldPlayAi(game, yourName);
+
+    return {
+        yourField,
+        globalField,
+        allPlayersField,
+
+        setGlobal,
+        getGlobal,
+        setYours,
+        getYours,
+
+        isYourTurn,
+        playAi,
+        nextToPlay: game.nextToPlay,
+        incrementPlayer: () => IncrementNextToPlayer(game),
+        playerNames: game.players.map(p => p.name),
+        updateGame: () => updateGame(game),
+    }
+}
+
+export function useAI(playAi: boolean, aiAction: () => void) {
+    React.useEffect(() => {
+        if (playAi) {
+            console.log("playing AI turn!");
+            aiAction();
+        }
+    }, [playAi])
 }

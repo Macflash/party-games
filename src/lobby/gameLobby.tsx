@@ -15,9 +15,8 @@ export const GameLobby: React.FC<{ game: ServerGameObject, yourName: string, sta
         <Header>Game: {game.name}</Header>
         <div style={{ display: "flex", alignItems: "flex-start" }}>
             <div style={{ flex: "auto" }}>
-                <Header>Info</Header>
-                {<div>Invite <a href={window.location.href + "?game=" + game.gameId}>Link</a></div>}
-                <div>Type: {game.objectData?.type}</div>
+                {<div><a href={window.location.href + "?game=" + game.gameId}>Invite Link</a></div>}
+                <div>Game: {game.objectData?.type}</div>
                 <Input
                     name="Max Players"
                     value={game.maxPlayers == undefined ? "No maximum" : game.maxPlayers}
