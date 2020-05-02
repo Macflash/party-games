@@ -16,13 +16,13 @@ const pollWait = 1500;
 var currentGame: ServerGameObject | null = null;
 var setter: CB<ServerGameObject> | null = null;
 
+const checkIfInGame = (api: IGenericGameApi) => api.Lobby.CheckIfInGame();
 const refreshGame = (api: IGenericGameApi) => api.Lobby.GetCurrentGame();
 const setCurrentGame = (game: ServerGameObject) => {
   currentGame = game;
   setter?.(game);
 }
 
-//var isRunning = false;
 const startGameTimer = (api: IGenericGameApi, playerName: string) => {
   setTimeout(async () => {
     // two main states
@@ -70,7 +70,7 @@ export function useColors() {
   };
 }
 
-function setAppColors(h: number){
+function setAppColors(h: number) {
   var colors = CreateColors(h);
   var html = document.getElementsByTagName('html')[0];
   html.style.setProperty("--main-color", `rgb(${colors[0].r},${colors[0].g},${colors[0].b})`);
@@ -86,7 +86,7 @@ function App() {
 
     setInterval(() => {
       startingHue += .001;
-     setAppColors(startingHue);
+      setAppColors(startingHue);
     }, 250);
   }, []);
 
@@ -96,7 +96,6 @@ function App() {
   setter = setGame;
 
   const setGameAndStartTimer = (game: ServerGameObject, playerName: string) => {
-    localStorage.setItem("yourname", playerName);
     setYourName(playerName);
     setCurrentGame(game);
     startGameTimer(api, playerName);
@@ -137,13 +136,13 @@ function App() {
     console.log("updated game", game, resp);
   };
 
+  // Handle existing games and deep links!
   React.useEffect(() => {
     // check for deep link
     // FIRST check you ARENT in a game already...
-    refreshGame(api).then(g => {
-      var localName = localStorage.getItem("yourname");
-      if(g && localName){
-        setGameAndStartTimer(g, localName);
+    checkIfInGame(api).then(response => {
+      if (response) {
+        setGameAndStartTimer(response.game, response.playerName);
       }
       else {
         if (window.location.search && window.location.search.indexOf("game=") >= 0) {
@@ -152,7 +151,6 @@ function App() {
         }
       }
     });
-
   }, []);
 
   if (!playerName) {

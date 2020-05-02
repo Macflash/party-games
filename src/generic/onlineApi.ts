@@ -15,11 +15,13 @@ function decodeObjectData(game: ServerGameObject): ServerGameObject {
 const handleSingleGameGet = (r: { data: ServerGameObject }) => decodeObjectData(r.data);
 const handleCreateRequest = (request: ICreateGameContract) => ({ ...request, game: encodeObjectData(request.game) });
 const handleCreateAndJoinResponse = (r: { data: ICreateGameContract | IJoinGameResponse }) => ({ ...r.data, game: decodeObjectData(r.data.game) });
+const handleCheckIfInGame = (r: { data: ICreateGameContract | IJoinGameResponse | null }) => (r.data ? { ...r.data, game: decodeObjectData(r.data.game) } : null);
 
 export const OnlineApi: IGenericGameApi = {
     Lobby: {
         GetAll: () => axios.get("/Games/GetGames").then(r => r.data),
         GetCurrentGame: () => axios.get<ServerGameObject>("/Games/GetCurrentGame").then(handleSingleGameGet),
+        CheckIfInGame: () => axios.get<IJoinGameResponse | null>("/Games/Refresh").then(handleCheckIfInGame),
         Create: request => axios.post<ICreateGameContract>("/Games/Create", handleCreateRequest(request)).then(handleCreateAndJoinResponse),
         Join: request => axios.post<IJoinGameResponse>("/Games/Join", request).then(handleCreateAndJoinResponse),
         Update: game => axios.post("/Games/Update", encodeObjectData(game)),

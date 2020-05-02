@@ -20,6 +20,7 @@ export const LocalApi: IGenericGameApi = {
         GetAll: async () => delayed(allGames),
         GetById: async id => delayed(allGames[Number(id)]),
         GetCurrentGame: async () => delayed(currentGame!),
+        CheckIfInGame: async () => delayed(currentPlayer && currentGame ? {game: currentGame, playerName: currentPlayer} : null),
         Create: async newGame => { 
             newGame.game.gameId = localGameIdCounter.toString();
             allGames[localGameIdCounter] = newGame.game;

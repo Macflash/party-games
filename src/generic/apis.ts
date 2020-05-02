@@ -42,6 +42,9 @@ export interface IGenericLobbyApi {
     /** Get the latest game object after joining a game */
     GetCurrentGame: Get<ServerGameObject>;
 
+    /** check if already in a game */
+    CheckIfInGame: Get<IJoinGameResponse | null>;
+
     /** Create a game on the server. Response can be empty if the server doesn't change anything. */
     Create: Post<ICreateGameContract, ICreateGameContract>;
 
